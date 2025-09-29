@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCare - Sign In</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="signin-card">
+                <div class="logo">
+                    <i class="fas fa-car"></i>
+                    <h1>AutoCare</h1>
+                </div>
+                <p class="subtitle">Your vehicle service management platform</p>
+                
+                <div class="form-group">
+                    <div class="input-container">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="username" placeholder="Username" class="form-input">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="password" placeholder="Password" class="form-input">
+                    </div>
+                </div>
+                
+                <button id="signinBtn" onclick="localStorage.setItem('autocare_user', JSON.stringify({name: 'AutoCare User', loginTime: new Date().toISOString()})); window.location.href='home.html';">
+                    <span>Sign In</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

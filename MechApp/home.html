@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCare - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="navbar">
+            <div class="nav-logo">
+                <i class="fas fa-car"></i>
+                <h1>AutoCare</h1>
+            </div>
+            <button id="logoutBtn" class="logout-btn" onclick="localStorage.removeItem('autocare_user'); window.location.href='index.html';">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </button>
+        </nav>
+        
+        <main class="main-content">
+            <div class="container">
+                <div class="welcome-section">
+                    <h2>Choose Your Service</h2>
+                    <p>Select the type of appointment you need for your vehicle</p>
+                </div>
+                
+                <div class="services-grid">
+                    <div class="service-card" data-service="oil-change">
+                        <div class="service-icon">
+                            <i class="fas fa-oil-can"></i>
+                        </div>
+                        <h3>Oil Change</h3>
+                        <p class="service-desc">Regular engine oil replacement and filter change</p>
+                        <div class="service-details">
+                            <span class="price">$29.99</span>
+                            <span class="duration">30-45 min</span>
+                        </div>
+                        <button class="select-btn">Select Service</button>
+                    </div>
+                    
+                    <div class="service-card" data-service="brake-inspection">
+                        <div class="service-icon">
+                            <i class="fas fa-circle-notch"></i>
+                        </div>
+                        <h3>Brake Inspection</h3>
+                        <p class="service-desc">Complete brake system check and pad replacement</p>
+                        <div class="service-details">
+                            <span class="price">$89.99</span>
+                            <span class="duration">1-2 hours</span>
+                        </div>
+                        <button class="select-btn">Select Service</button>
+                    </div>
+                    
+                    <div class="service-card" data-service="tire-rotation">
+                        <div class="service-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h3>Tire Rotation</h3>
+                        <p class="service-desc">Rotate tires for even wear and extend tire life</p>
+                        <div class="service-details">
+                            <span class="price">$24.99</span>
+                            <span class="duration">20-30 min</span>
+                        </div>
+                        <button class="select-btn">Select Service</button>
+                    </div>
+                </div>
+                
+                <div id="selectedService" class="selected-service" style="display: none;">
+                    <div class="summary-card">
+                        <h3>Selected Service</h3>
+                        <div class="summary-content">
+                            <div class="service-info">
+                                <h4 id="serviceName"></h4>
+                                <p id="servicePrice"></p>
+                            </div>
+                            <div class="summary-actions">
+                                <button id="bookBtn" class="btn-primary">Book Appointment</button>
+                                <button id="changeBtn" class="btn-secondary">Change Service</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
