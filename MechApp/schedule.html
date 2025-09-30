@@ -20,10 +20,23 @@
                     <i class="fas fa-arrow-left"></i>
                     Back to Services
                 </button>
-                <button id="logoutBtn" class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
+                <button id="menuToggle" class="menu-toggle">
+                    <i class="fas fa-bars"></i>
                 </button>
+                <div id="dropdownMenu" class="dropdown-menu">
+                    <a href="account.html" class="dropdown-item">
+                        <i class="fas fa-user"></i>
+                        My Account
+                    </a>
+                    <a href="home.html" class="dropdown-item">
+                        <i class="fas fa-home"></i>
+                        Services
+                    </a>
+                    <a href="#" id="logoutBtn" class="dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </div>
             </div>
         </nav>
         
@@ -39,7 +52,6 @@
                         <h3 id="serviceTitle">Service Title</h3>
                         <p id="serviceDescription">Service Description</p>
                         <div class="service-details">
-                            <span class="price" id="servicePrice">$0.00</span>
                             <span class="duration" id="serviceDuration">0 min</span>
                         </div>
                     </div>
@@ -98,10 +110,6 @@
                             <span class="label">Time:</span>
                             <span class="value" id="summaryTime">9:00 AM</span>
                         </div>
-                        <div class="summary-item">
-                            <span class="label">Price:</span>
-                            <span class="value" id="summaryPrice">$29.99</span>
-                        </div>
                     </div>
                     
                     <div class="customer-form">
@@ -112,6 +120,10 @@
                         </div>
                         <div class="form-row">
                             <input type="email" id="customerEmail" placeholder="Email Address">
+                        </div>
+                        <div class="notes-section">
+                            <label for="appointmentNotes" class="notes-label">Service Notes (Optional)</label>
+                            <textarea id="appointmentNotes" class="notes-input" placeholder="Any specific requirements, concerns, or additional information about your vehicle..."></textarea>
                         </div>
                     </div>
                     

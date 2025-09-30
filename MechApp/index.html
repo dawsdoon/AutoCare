@@ -10,31 +10,98 @@
 </head>
 <body>
     <div class="container">
-        <div class="signin-card">
-                <div class="logo">
-                    <i class="fas fa-car"></i>
-                    <h1>AutoCare</h1>
-                </div>
-                <p class="subtitle">Your vehicle service management platform</p>
-                
+        <div class="auth-card">
+            <div class="logo">
+                <i class="fas fa-car"></i>
+                <h1>AutoCare</h1>
+            </div>
+            <p class="subtitle">Your vehicle service management platform</p>
+            
+            <!-- Toggle between Sign In and Sign Up -->
+            <div class="auth-toggle">
+                <button id="signinTab" class="auth-tab active">Sign In</button>
+                <button id="signupTab" class="auth-tab">Create Account</button>
+            </div>
+            
+            <!-- Sign In Form -->
+            <div id="signinForm" class="auth-form">
                 <div class="form-group">
                     <div class="input-container">
-                        <i class="fas fa-user input-icon"></i>
-                        <input type="text" id="username" placeholder="Username" class="form-input">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="signinEmail" placeholder="Email Address" class="form-input">
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <div class="input-container">
                         <i class="fas fa-lock input-icon"></i>
-                        <input type="password" id="password" placeholder="Password" class="form-input">
+                        <input type="password" id="signinPassword" placeholder="Password" class="form-input">
                     </div>
+                    <div id="signinError" class="error-message"></div>
                 </div>
                 
-                <button id="signinBtn" onclick="localStorage.setItem('autocare_user', JSON.stringify({name: 'AutoCare User', loginTime: new Date().toISOString()})); window.location.href='home.html';">
+                <button id="signinBtn" class="auth-btn">
                     <span>Sign In</span>
                     <i class="fas fa-arrow-right"></i>
                 </button>
+            </div>
+            
+            <!-- Sign Up Form -->
+            <div id="signupForm" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <div class="input-container">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="signupEmail" placeholder="Email Address" class="form-input" required>
+                    </div>
+                    <div id="emailError" class="error-message"></div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="signupPassword" placeholder="Password" class="form-input" required>
+                    </div>
+                    <div id="passwordError" class="error-message"></div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="confirmPassword" placeholder="Confirm Password" class="form-input" required>
+                    </div>
+                    <div id="confirmPasswordError" class="error-message"></div>
+                </div>
+                
+                <!-- Vehicle Information (Optional) -->
+                <div class="vehicle-section">
+                    <h4>Vehicle Information (Optional)</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <div class="input-container">
+                                <i class="fas fa-car input-icon"></i>
+                                <input type="text" id="vehicleMake" placeholder="Make (e.g., Toyota)" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-container">
+                                <i class="fas fa-car input-icon"></i>
+                                <input type="text" id="vehicleModel" placeholder="Model (e.g., Camry)" class="form-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-container">
+                            <i class="fas fa-calendar input-icon"></i>
+                            <input type="number" id="vehicleYear" placeholder="Year" class="form-input" min="1900" max="2025">
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="signupBtn" class="auth-btn">
+                    <span>Create Account</span>
+                    <i class="fas fa-user-plus"></i>
+                </button>
+            </div>
         </div>
     </div>
     

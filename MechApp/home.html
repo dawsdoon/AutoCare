@@ -15,10 +15,25 @@
                 <i class="fas fa-car"></i>
                 <h1>AutoCare</h1>
             </div>
-            <button id="logoutBtn" class="logout-btn" onclick="localStorage.removeItem('autocare_user'); window.location.href='index.html';">
-                <i class="fas fa-sign-out-alt"></i>
-                Logout
-            </button>
+            <div class="nav-actions">
+                <button id="menuToggle" class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div id="dropdownMenu" class="dropdown-menu">
+                    <a href="#" id="accountBtn" class="dropdown-item">
+                        <i class="fas fa-user"></i>
+                        My Account
+                    </a>
+                    <a href="home.html" class="dropdown-item">
+                        <i class="fas fa-home"></i>
+                        Services
+                    </a>
+                    <a href="#" id="logoutBtn" class="dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </div>
+            </div>
         </nav>
         
         <main class="main-content">
@@ -36,7 +51,6 @@
                         <h3>Oil Change</h3>
                         <p class="service-desc">Regular engine oil replacement and filter change</p>
                         <div class="service-details">
-                            <span class="price">$29.99</span>
                             <span class="duration">30-45 min</span>
                         </div>
                         <button class="select-btn">Select Service</button>
@@ -49,7 +63,6 @@
                         <h3>Brake Inspection</h3>
                         <p class="service-desc">Complete brake system check and pad replacement</p>
                         <div class="service-details">
-                            <span class="price">$89.99</span>
                             <span class="duration">1-2 hours</span>
                         </div>
                         <button class="select-btn">Select Service</button>
@@ -62,8 +75,43 @@
                         <h3>Tire Rotation</h3>
                         <p class="service-desc">Rotate tires for even wear and extend tire life</p>
                         <div class="service-details">
-                            <span class="price">$24.99</span>
                             <span class="duration">20-30 min</span>
+                        </div>
+                        <button class="select-btn">Select Service</button>
+                    </div>
+                    
+                    <div class="service-card" data-service="flat-tire-repair">
+                        <div class="service-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h3>Flat Tire Repair</h3>
+                        <p class="service-desc">Professional tire patching and repair services</p>
+                        <div class="service-details">
+                            <span class="duration">30-45 min</span>
+                        </div>
+                        <button class="select-btn">Select Service</button>
+                    </div>
+                    
+                    <div class="service-card" data-service="wheel-alignment">
+                        <div class="service-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <h3>Wheel Alignment</h3>
+                        <p class="service-desc">Precise wheel alignment for optimal handling and tire wear</p>
+                        <div class="service-details">
+                            <span class="duration">45-60 min</span>
+                        </div>
+                        <button class="select-btn">Select Service</button>
+                    </div>
+                    
+                    <div class="service-card" data-service="seasonal-tire-change">
+                        <div class="service-icon">
+                            <i class="fas fa-snowflake"></i>
+                        </div>
+                        <h3>Seasonal Tire Change</h3>
+                        <p class="service-desc">Switch between summer and winter tires seasonally</p>
+                        <div class="service-details">
+                            <span class="duration">30-45 min</span>
                         </div>
                         <button class="select-btn">Select Service</button>
                     </div>
@@ -75,7 +123,10 @@
                         <div class="summary-content">
                             <div class="service-info">
                                 <h4 id="serviceName"></h4>
-                                <p id="servicePrice"></p>
+                            </div>
+                            <div class="notes-section">
+                                <label for="serviceNotes" class="notes-label">Additional Notes (Optional)</label>
+                                <textarea id="serviceNotes" class="notes-input" placeholder="Any specific requirements, concerns, or additional information about your vehicle..."></textarea>
                             </div>
                             <div class="summary-actions">
                                 <button id="bookBtn" class="btn-primary">Book Appointment</button>
