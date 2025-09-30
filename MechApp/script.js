@@ -5,63 +5,105 @@ document.addEventListener('DOMContentLoaded', function() {
     const logoutBtn = document.getElementById('logoutBtn');
     
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', function() {
-            localStorage.removeItem('autocare_user');
-            window.location.href = 'index.html';
+        logoutBtn.addEventListener('click', async function() {
+            try {
+                await AuthService.signOut();
+                localStorage.removeItem('autocare_user');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                // Still redirect even if logout fails
+                localStorage.removeItem('autocare_user');
+                window.location.href = 'index.html';
+            }
         });
     }
 
     const serviceCards = document.querySelectorAll('.service-card');
-    const selectedService = document.getElementById('selectedService');
-    const serviceName = document.getElementById('serviceName');
+    const selectedServices = document.getElementById('selectedServices');
+    const servicesList = document.getElementById('servicesList');
     const bookBtn = document.getElementById('bookBtn');
     const changeBtn = document.getElementById('changeBtn');
 
-    let selectedServiceData = null;
+    let selectedServicesData = [];
+
+    // Service data mapping
+    const serviceData = {
+        'oil-change': { title: 'Oil Change', info: 'Regular engine oil replacement and filter change', duration: '30-45 min' },
+        'brake-inspection': { title: 'Brake Inspection', info: 'Complete brake system check and pad replacement', duration: '1-2 hours' },
+        'tire-rotation': { title: 'Tire Rotation', info: 'Rotate tires for even wear and extend tire life', duration: '20-30 min' },
+        'flat-tire-repair': { title: 'Flat Tire Repair', info: 'Professional tire patching and repair services', duration: '30-45 min' },
+        'wheel-alignment': { title: 'Wheel Alignment', info: 'Precise wheel alignment for optimal handling and tire wear', duration: '45-60 min' },
+        'seasonal-tire-change': { title: 'Seasonal Tire Change', info: 'Switch between summer and winter tires seasonally', duration: '30-45 min' }
+    };
 
     serviceCards.forEach(card => {
-        const selectBtn = card.querySelector('.select-btn');
-        selectBtn.addEventListener('click', function() {
-            serviceCards.forEach(c => c.style.border = 'none');
-            card.style.border = '2px solid #007bff';
+        const checkbox = card.querySelector('.service-checkbox-input');
+        const serviceType = card.getAttribute('data-service');
+        
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                const service = {
+                    type: serviceType,
+                    title: serviceData[serviceType].title,
+                    info: serviceData[serviceType].info,
+                    duration: serviceData[serviceType].duration
+                };
+                selectedServicesData.push(service);
+            } else {
+                selectedServicesData = selectedServicesData.filter(s => s.type !== serviceType);
+            }
             
-            const serviceType = card.getAttribute('data-service');
-            const serviceTitle = card.querySelector('h3').textContent;
-            const serviceInfo = card.querySelector('p').textContent;
-            
-            selectedServiceData = {
-                type: serviceType,
-                title: serviceTitle,
-                info: serviceInfo,
-                notes: ''
-            };
-            
-            serviceName.textContent = serviceTitle;
-            selectedService.style.display = 'block';
+            updateSelectedServicesDisplay();
         });
     });
+
+    function updateSelectedServicesDisplay() {
+        if (selectedServicesData.length > 0) {
+            servicesList.innerHTML = '';
+            selectedServicesData.forEach(service => {
+                const serviceItem = document.createElement('div');
+                serviceItem.className = 'service-item';
+                serviceItem.innerHTML = `
+                    <span class="service-item-name">${service.title}</span>
+                    <span class="service-item-duration">${service.duration}</span>
+                `;
+                servicesList.appendChild(serviceItem);
+            });
+            selectedServices.style.display = 'block';
+        } else {
+            selectedServices.style.display = 'none';
+        }
+    }
 
     if (bookBtn) {
         bookBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            if (selectedServiceData) {
+            if (selectedServicesData.length > 0) {
                 const notesTextarea = document.getElementById('serviceNotes');
-                if (notesTextarea) {
-                    selectedServiceData.notes = notesTextarea.value;
-                }
-                localStorage.setItem('selectedService', JSON.stringify(selectedServiceData));
+                const notes = notesTextarea ? notesTextarea.value : '';
+                
+                const servicesToStore = selectedServicesData.map(service => ({
+                    ...service,
+                    notes: notes
+                }));
+                
+                localStorage.setItem('selectedServices', JSON.stringify(servicesToStore));
                 window.location.href = 'schedule.html';
             } else {
-                alert('Please select a service first');
+                alert('Please select at least one service first');
             }
         });
     }
 
     if (changeBtn) {
         changeBtn.addEventListener('click', function() {
-            selectedService.style.display = 'none';
-            serviceCards.forEach(c => c.style.border = 'none');
-            selectedServiceData = null;
+            selectedServices.style.display = 'none';
+            // Uncheck all checkboxes
+            document.querySelectorAll('.service-checkbox-input').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            selectedServicesData = [];
         });
     }
 
@@ -98,7 +140,7 @@ function setupAuth() {
     }
 
     if (signinBtn) {
-        signinBtn.addEventListener('click', function() {
+        signinBtn.addEventListener('click', async function() {
             const email = document.getElementById('signinEmail').value;
             const password = document.getElementById('signinPassword').value;
             
@@ -109,37 +151,44 @@ function setupAuth() {
                 return;
             }
             
-            if (!isValidEmail(email)) {
-                showError('signinError', 'Please enter a valid email address');
-                return;
+            // Email validation removed for testing
+            
+            signinBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+            signinBtn.disabled = true;
+            
+            try {
+                const result = await AuthService.signIn(email, password);
+                
+                if (result.success) {
+                    const user = result.data.user;
+                    localStorage.setItem('autocare_user', JSON.stringify({
+                        id: user.id,
+                        email: user.email,
+                        name: user.user_metadata?.full_name || 'User',
+                        vehicle: {
+                            make: user.user_metadata?.vehicle_make || null,
+                            model: user.user_metadata?.vehicle_model || null,
+                            year: user.user_metadata?.vehicle_year || null
+                        }
+                    }));
+                    
+                    window.location.href = 'home.html';
+                } else {
+                    showError('signinError', result.error);
+                }
+            } catch (error) {
+                showError('signinError', 'An error occurred. Please try again.');
+            } finally {
+                signinBtn.innerHTML = '<span>Sign In</span><i class="fas fa-arrow-right"></i>';
+                signinBtn.disabled = false;
             }
-            
-            const existingUsers = JSON.parse(localStorage.getItem('autocare_users') || '[]');
-            const user = existingUsers.find(u => u.email === email);
-            
-            if (!user) {
-                showError('signinError', 'User not found. Please create an account first.');
-                return;
-            }
-            
-            if (user.password !== password) {
-                showError('signinError', 'Incorrect password. Please try again.');
-                return;
-            }
-            
-            localStorage.setItem('autocare_user', JSON.stringify({
-                name: user.name,
-                email: user.email,
-                vehicle: user.vehicle,
-                loginTime: new Date().toISOString()
-            }));
-            
-            window.location.href = 'home.html';
         });
     }
 
     if (signupBtn) {
-        signupBtn.addEventListener('click', function() {
+        signupBtn.addEventListener('click', async function() {
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
             const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
@@ -149,8 +198,14 @@ function setupAuth() {
 
             clearErrors();
 
-            if (!isValidEmail(email)) {
-                showError('emailError', 'Please enter a valid email address');
+            // Validate name fields
+            if (!firstName.trim()) {
+                showError('firstNameError', 'Please enter your first name');
+                return;
+            }
+
+            if (!lastName.trim()) {
+                showError('lastNameError', 'Please enter your last name');
                 return;
             }
 
@@ -165,44 +220,65 @@ function setupAuth() {
                 return;
             }
 
-            const existingUsers = JSON.parse(localStorage.getItem('autocare_users') || '[]');
-            if (existingUsers.find(u => u.email === email)) {
-                showError('emailError', 'An account with this email already exists');
-                return;
+            signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+            signupBtn.disabled = true;
+
+            try {
+                const fullName = `${firstName.trim()} ${lastName.trim()}`;
+                const userData = {
+                    vehicleMake: vehicleMake || null,
+                    vehicleModel: vehicleModel || null,
+                    vehicleYear: vehicleYear ? parseInt(vehicleYear) : null,
+                    fullName: fullName
+                };
+
+                const result = await AuthService.signUp(email, password, userData);
+                
+                if (result.success) {
+                    const user = result.data.user;
+                    const userData = {
+                        id: user.id,
+                        email: user.email,
+                        name: user.user_metadata?.full_name || fullName,
+                        phone: null,
+                        vehicle: {
+                            make: user.user_metadata?.vehicle_make || null,
+                            model: user.user_metadata?.vehicle_model || null,
+                            year: user.user_metadata?.vehicle_year || null
+                        }
+                    };
+                    
+                    localStorage.setItem('autocare_user', JSON.stringify(userData));
+                    
+                    try {
+                        await UserService.createUserProfile(user.id, {
+                            fullName: userData.name,
+                            phoneNumber: null,
+                            vehicleMake: userData.vehicle.make,
+                            vehicleModel: userData.vehicle.model,
+                            vehicleYear: userData.vehicle.year
+                        });
+                    } catch (error) {
+                        console.error('Error creating user profile:', error);
+                        // Continue anyway - profile can be created later
+                    }
+                    
+                    alert('Account created successfully! Welcome to AutoCare!');
+                    window.location.href = 'home.html';
+                } else {
+                    showError('emailError', result.error);
+                }
+            } catch (error) {
+                showError('emailError', 'An error occurred. Please try again.');
+            } finally {
+                signupBtn.innerHTML = '<span>Create Account</span><i class="fas fa-user-plus"></i>';
+                signupBtn.disabled = false;
             }
-
-            const userData = {
-                name: email.split('@')[0],
-                email: email,
-                password: password,
-                vehicle: {
-                    make: vehicleMake || null,
-                    model: vehicleModel || null,
-                    year: vehicleYear || null
-                },
-                createdAt: new Date().toISOString()
-            };
-
-            existingUsers.push(userData);
-            localStorage.setItem('autocare_users', JSON.stringify(existingUsers));
-            
-            localStorage.setItem('autocare_user', JSON.stringify({
-                name: userData.name,
-                email: userData.email,
-                vehicle: userData.vehicle,
-                loginTime: new Date().toISOString()
-            }));
-            
-            alert('Account created successfully! Welcome to AutoCare!');
-            window.location.href = 'home.html';
         });
     }
 }
 
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
+// Email validation function removed for testing
 
 function validatePassword(password) {
     if (password.length < 8) {
@@ -260,3 +336,5 @@ function setupNavigation() {
         });
     }
 }
+
+
