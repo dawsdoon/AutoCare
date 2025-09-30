@@ -5,22 +5,29 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
-    const selectedService = JSON.parse(localStorage.getItem('selectedService'));
-    if (!selectedService) {
+    const selectedServices = JSON.parse(localStorage.getItem('selectedServices'));
+    if (!selectedServices || selectedServices.length === 0) {
         window.location.href = 'home.html';
         return;
     }
     
-    initializePage(selectedService);
+    initializePage(selectedServices);
     setupEventListeners();
 });
 
-function initializePage(service) {
-    document.getElementById('serviceTitle').textContent = service.title;
-    document.getElementById('serviceDescription').textContent = service.info;
+function initializePage(services) {
+    if (services.length === 1) {
+        document.getElementById('serviceTitle').textContent = services[0].title;
+        document.getElementById('serviceDescription').textContent = services[0].info;
+    } else {
+        document.getElementById('serviceTitle').textContent = `${services.length} Services Selected`;
+        document.getElementById('serviceDescription').textContent = services.map(s => s.title).join(', ');
+    }
     
-    const duration = getServiceDuration(service.type);
-    document.getElementById('serviceDuration').textContent = duration;
+    const totalDuration = calculateTotalDuration(services);
+    document.getElementById('serviceDuration').textContent = totalDuration;
+    
+    populateUserInfo();
     
     loadTimeSlots('2024-01-15');
 }
@@ -37,14 +44,45 @@ function getServiceDuration(serviceType) {
     return durations[serviceType] || '30 min';
 }
 
+function calculateTotalDuration(services) {
+    // For multiple services, show estimated total time
+    if (services.length === 1) {
+        return getServiceDuration(services[0].type);
+    } else {
+        return `~${services.length * 45} min (estimated)`;
+    }
+}
+
+function populateUserInfo() {
+    const user = JSON.parse(localStorage.getItem('autocare_user'));
+    if (user) {
+        // Pre-populate the form fields with user data
+        document.getElementById('customerName').value = user.name || '';
+        document.getElementById('customerEmail').value = user.email || '';
+        document.getElementById('customerPhone').value = user.phone || '';
+        
+        // Make name and email read-only since user is logged in
+        document.getElementById('customerName').readOnly = true;
+        document.getElementById('customerEmail').readOnly = true;
+        
+        document.getElementById('customerName').style.backgroundColor = '#f5f5f5';
+        document.getElementById('customerEmail').style.backgroundColor = '#f5f5f5';
+    }
+}
+
 function setupEventListeners() {
     document.getElementById('backBtn').addEventListener('click', function() {
         window.location.href = 'home.html';
     });
     
-    document.getElementById('logoutBtn').addEventListener('click', function() {
+    document.getElementById('logoutBtn').addEventListener('click', async function() {
+        try {
+            await AuthService.signOut();
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
         localStorage.removeItem('autocare_user');
-        localStorage.removeItem('selectedService');
+        localStorage.removeItem('selectedServices');
         window.location.href = 'index.html';
     });
     
@@ -73,7 +111,7 @@ function setupEventListeners() {
     });
 }
 
-function loadTimeSlots(date) {
+async function loadTimeSlots(date) {
     const timeSlotsContainer = document.getElementById('timeSlots');
     const selectedDateText = document.getElementById('selectedDateText');
     
@@ -85,11 +123,12 @@ function loadTimeSlots(date) {
         day: 'numeric' 
     });
     
-    const serviceType = JSON.parse(localStorage.getItem('selectedService')).type;
+    const selectedServices = JSON.parse(localStorage.getItem('selectedServices'));
+    const serviceType = selectedServices[0].type; // Use first service for time slot generation
     const timeSlots = generateTimeSlots(serviceType);
     
-    const existingAppointments = JSON.parse(localStorage.getItem('appointments') || '[]');
-    const bookedSlots = getBookedSlotsForDate(date, existingAppointments);
+    const bookedSlotsResult = await AppointmentService.getAvailableTimeSlots(date);
+    const bookedSlots = bookedSlotsResult.success ? bookedSlotsResult.data : [];
     
     timeSlotsContainer.innerHTML = '';
     
@@ -131,17 +170,17 @@ function generateTimeSlots(serviceType) {
     return slotConfigs[serviceType] || ['9:00 AM', '10:30 AM', '2:00 PM', '3:30 PM'];
 }
 
-function getBookedSlotsForDate(date, appointments) {
-    return appointments
-        .filter(appointment => appointment.date === date && appointment.status !== 'cancelled')
-        .map(appointment => appointment.time);
-}
 
 function showBookingSection(date, time) {
     const bookingSection = document.getElementById('bookingSection');
-    const selectedService = JSON.parse(localStorage.getItem('selectedService'));
+    const selectedServices = JSON.parse(localStorage.getItem('selectedServices'));
     
-    document.getElementById('summaryService').textContent = selectedService.title;
+    if (selectedServices.length === 1) {
+        document.getElementById('summaryService').textContent = selectedServices[0].title;
+    } else {
+        document.getElementById('summaryService').textContent = `${selectedServices.length} Services: ${selectedServices.map(s => s.title).join(', ')}`;
+    }
+    
     document.getElementById('summaryDate').textContent = new Date(date).toLocaleDateString('en-US', { 
         weekday: 'long', 
         year: 'numeric', 
@@ -154,14 +193,14 @@ function showBookingSection(date, time) {
     bookingSection.scrollIntoView({ behavior: 'smooth' });
 }
 
-function confirmBooking() {
+async function confirmBooking() {
     const customerName = document.getElementById('customerName').value;
     const customerPhone = document.getElementById('customerPhone').value;
     const customerEmail = document.getElementById('customerEmail').value;
     const appointmentNotes = document.getElementById('appointmentNotes').value;
     
-    if (!customerName || !customerPhone) {
-        alert('Please fill in your name and phone number.');
+    if (!customerPhone) {
+        alert('Please provide your phone number.');
         return;
     }
     
@@ -173,59 +212,51 @@ function confirmBooking() {
     
     const selectedDate = selectedSlot.dataset.date;
     const selectedTime = selectedSlot.dataset.time;
-    const selectedService = JSON.parse(localStorage.getItem('selectedService'));
+    const selectedServices = JSON.parse(localStorage.getItem('selectedServices'));
+    const userData = JSON.parse(localStorage.getItem('autocare_user'));
     
-    const existingAppointments = JSON.parse(localStorage.getItem('appointments') || '[]');
-    const conflict = existingAppointments.find(appointment => 
-        appointment.date === selectedDate && 
-        appointment.time === selectedTime && 
-        appointment.status !== 'cancelled'
-    );
+    const confirmBtn = document.getElementById('confirmBooking');
+    const originalText = confirmBtn.innerHTML;
+    confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
+    confirmBtn.disabled = true;
     
-    if (conflict) {
-        alert('This time slot has just been booked by another customer. Please select a different time.');
-        loadTimeSlots(selectedDate);
-        return;
+    try {
+        const serviceNames = selectedServices.map(s => s.title).join(', ');
+        const serviceDescriptions = selectedServices.map(s => s.info).join('; ');
+        
+        const appointmentData = {
+            userId: userData.id,
+            serviceName: serviceNames,
+            serviceDescription: serviceDescriptions,
+            date: selectedDate,
+            time: selectedTime,
+            customerName: customerName,
+            customerEmail: customerEmail,
+            customerPhone: customerPhone,
+            notes: appointmentNotes || selectedServices[0]?.notes || ''
+        };
+        
+        const result = await AppointmentService.createAppointment(appointmentData);
+        
+        if (result.success) {
+            const notesText = appointmentData.notes ? `\nNotes: ${appointmentData.notes}` : '';
+            const servicesText = selectedServices.length === 1 ? 
+                `Service: ${serviceNames}` : 
+                `Services: ${serviceNames}`;
+            
+            alert(`Appointment confirmed!\n\n${servicesText}\nDate: ${new Date(selectedDate).toLocaleDateString()}\nTime: ${selectedTime}${notesText}\n\nWe'll contact you at ${customerPhone} to confirm.`);
+            
+            localStorage.removeItem('selectedServices');
+            window.location.href = 'home.html';
+        } else {
+            alert(`Error creating appointment: ${result.error}`);
+        }
+    } catch (error) {
+        console.error('Booking error:', error);
+        alert('An error occurred while booking your appointment. Please try again.');
+    } finally {
+        confirmBtn.innerHTML = originalText;
+        confirmBtn.disabled = false;
     }
-    
-    const appointment = {
-        id: Date.now().toString(),
-        service: selectedService,
-        date: selectedDate,
-        time: selectedTime,
-        customer: {
-            name: customerName,
-            phone: customerPhone,
-            email: customerEmail
-        },
-        notes: appointmentNotes || selectedService.notes || '',
-        status: 'confirmed',
-        createdAt: new Date().toISOString()
-    };
-    
-    let appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
-    appointments.push(appointment);
-    localStorage.setItem('appointments', JSON.stringify(appointments));
-    
-    const notesText = appointment.notes ? `\nNotes: ${appointment.notes}` : '';
-    alert(`Appointment confirmed!\n\nService: ${selectedService.title}\nDate: ${new Date(selectedDate).toLocaleDateString()}\nTime: ${selectedTime}${notesText}\n\nWe'll contact you at ${customerPhone} to confirm.`);
-    
-    localStorage.removeItem('selectedService');
-    window.location.href = 'home.html';
 }
 
-function setupNavigation() {
-    const menuToggle = document.getElementById('menuToggle');
-    const dropdownMenu = document.getElementById('dropdownMenu');
-    
-    if (menuToggle && dropdownMenu) {
-        menuToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('show');
-        });
-        
-        document.addEventListener('click', function() {
-            dropdownMenu.classList.remove('show');
-        });
-    }
-}

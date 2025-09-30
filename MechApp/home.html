@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="dashboard">
@@ -45,6 +46,10 @@
                 
                 <div class="services-grid">
                     <div class="service-card" data-service="oil-change">
+                        <div class="service-checkbox">
+                            <input type="checkbox" id="oil-change" class="service-checkbox-input">
+                            <label for="oil-change" class="service-checkbox-label"></label>
+                        </div>
                         <div class="service-icon">
                             <i class="fas fa-oil-can"></i>
                         </div>
@@ -53,10 +58,13 @@
                         <div class="service-details">
                             <span class="duration">30-45 min</span>
                         </div>
-                        <button class="select-btn">Select Service</button>
                     </div>
                     
                     <div class="service-card" data-service="brake-inspection">
+                        <div class="service-checkbox">
+                            <input type="checkbox" id="brake-inspection" class="service-checkbox-input">
+                            <label for="brake-inspection" class="service-checkbox-label"></label>
+                        </div>
                         <div class="service-icon">
                             <i class="fas fa-circle-notch"></i>
                         </div>
@@ -65,10 +73,13 @@
                         <div class="service-details">
                             <span class="duration">1-2 hours</span>
                         </div>
-                        <button class="select-btn">Select Service</button>
                     </div>
                     
                     <div class="service-card" data-service="tire-rotation">
+                        <div class="service-checkbox">
+                            <input type="checkbox" id="tire-rotation" class="service-checkbox-input">
+                            <label for="tire-rotation" class="service-checkbox-label"></label>
+                        </div>
                         <div class="service-icon">
                             <i class="fas fa-sync-alt"></i>
                         </div>
@@ -77,10 +88,13 @@
                         <div class="service-details">
                             <span class="duration">20-30 min</span>
                         </div>
-                        <button class="select-btn">Select Service</button>
                     </div>
                     
                     <div class="service-card" data-service="flat-tire-repair">
+                        <div class="service-checkbox">
+                            <input type="checkbox" id="flat-tire-repair" class="service-checkbox-input">
+                            <label for="flat-tire-repair" class="service-checkbox-label"></label>
+                        </div>
                         <div class="service-icon">
                             <i class="fas fa-tools"></i>
                         </div>
@@ -89,10 +103,13 @@
                         <div class="service-details">
                             <span class="duration">30-45 min</span>
                         </div>
-                        <button class="select-btn">Select Service</button>
                     </div>
                     
                     <div class="service-card" data-service="wheel-alignment">
+                        <div class="service-checkbox">
+                            <input type="checkbox" id="wheel-alignment" class="service-checkbox-input">
+                            <label for="wheel-alignment" class="service-checkbox-label"></label>
+                        </div>
                         <div class="service-icon">
                             <i class="fas fa-cog"></i>
                         </div>
@@ -101,10 +118,13 @@
                         <div class="service-details">
                             <span class="duration">45-60 min</span>
                         </div>
-                        <button class="select-btn">Select Service</button>
                     </div>
                     
                     <div class="service-card" data-service="seasonal-tire-change">
+                        <div class="service-checkbox">
+                            <input type="checkbox" id="seasonal-tire-change" class="service-checkbox-input">
+                            <label for="seasonal-tire-change" class="service-checkbox-label"></label>
+                        </div>
                         <div class="service-icon">
                             <i class="fas fa-snowflake"></i>
                         </div>
@@ -113,16 +133,15 @@
                         <div class="service-details">
                             <span class="duration">30-45 min</span>
                         </div>
-                        <button class="select-btn">Select Service</button>
                     </div>
                 </div>
                 
-                <div id="selectedService" class="selected-service" style="display: none;">
+                <div id="selectedServices" class="selected-services" style="display: none;">
                     <div class="summary-card">
-                        <h3>Selected Service</h3>
+                        <h3>Selected Services</h3>
                         <div class="summary-content">
-                            <div class="service-info">
-                                <h4 id="serviceName"></h4>
+                            <div class="services-list" id="servicesList">
+                                <!-- Selected services will be populated here -->
                             </div>
                             <div class="notes-section">
                                 <label for="serviceNotes" class="notes-label">Additional Notes (Optional)</label>
@@ -130,7 +149,7 @@
                             </div>
                             <div class="summary-actions">
                                 <button id="bookBtn" class="btn-primary">Book Appointment</button>
-                                <button id="changeBtn" class="btn-secondary">Change Service</button>
+                                <button id="changeBtn" class="btn-secondary">Change Services</button>
                             </div>
                         </div>
                     </div>
@@ -139,6 +158,7 @@
         </main>
     </div>
     
+    <script src="supabase-config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

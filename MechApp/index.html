@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="container">
@@ -48,6 +49,24 @@
             
             <!-- Sign Up Form -->
             <div id="signupForm" class="auth-form" style="display: none;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <div class="input-container">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="firstName" placeholder="First Name" class="form-input" required>
+                        </div>
+                        <div id="firstNameError" class="error-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="input-container">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="lastName" placeholder="Last Name" class="form-input" required>
+                        </div>
+                        <div id="lastNameError" class="error-message"></div>
+                    </div>
+                </div>
+                
                 <div class="form-group">
                     <div class="input-container">
                         <i class="fas fa-envelope input-icon"></i>
@@ -79,13 +98,13 @@
                         <div class="form-group">
                             <div class="input-container">
                                 <i class="fas fa-car input-icon"></i>
-                                <input type="text" id="vehicleMake" placeholder="Make (e.g., Toyota)" class="form-input">
+                                <input type="text" id="vehicleMake" placeholder="Make (e.g. Toyota)" class="form-input">
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="input-container">
                                 <i class="fas fa-car input-icon"></i>
-                                <input type="text" id="vehicleModel" placeholder="Model (e.g., Camry)" class="form-input">
+                                <input type="text" id="vehicleModel" placeholder="Model (e.g. Camry)" class="form-input">
                             </div>
                         </div>
                     </div>
@@ -105,6 +124,7 @@
         </div>
     </div>
     
+    <script src="supabase-config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

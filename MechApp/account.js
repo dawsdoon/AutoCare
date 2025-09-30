@@ -13,9 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function loadAccountData(userData) {
     document.getElementById('userName').textContent = userData.name || 'Not specified';
     document.getElementById('userEmail').textContent = userData.email || 'Not specified';
-    
-    const memberSince = userData.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'Unknown';
-    document.getElementById('memberSince').textContent = memberSince;
+    document.getElementById('userPhone').textContent = userData.phone || 'Not specified';
     
     if (userData.vehicle) {
         document.getElementById('vehicleMake').textContent = userData.vehicle.make || 'Not specified';
@@ -26,69 +24,68 @@ function loadAccountData(userData) {
     loadAppointments();
 }
 
-function loadAppointments() {
-    const appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
+async function loadAppointments() {
+    const userData = JSON.parse(localStorage.getItem('autocare_user'));
     const appointmentsList = document.getElementById('appointmentsList');
     
-    if (appointments.length === 0) {
-        appointmentsList.innerHTML = '<p class="no-appointments">No appointments found</p>';
-        return;
+    try {
+        const result = await AppointmentService.getUserAppointments(userData.id);
+        
+        if (result.success) {
+            const appointments = result.data;
+            
+            if (appointments.length === 0) {
+                appointmentsList.innerHTML = '<p class="no-appointments">No appointments found</p>';
+                return;
+            }
+            
+            appointments.sort((a, b) => new Date(b.appointment_date) - new Date(a.appointment_date));
+            
+            appointmentsList.innerHTML = '';
+            
+            appointments.forEach(appointment => {
+                const appointmentElement = document.createElement('div');
+                appointmentElement.className = 'appointment-item';
+                
+                const appointmentDate = new Date(appointment.appointment_date).toLocaleDateString();
+                const statusClass = appointment.status === 'confirmed' ? 'status-confirmed' : 'status-pending';
+                
+                appointmentElement.innerHTML = `
+                    <div class="appointment-header">
+                        <h4>${appointment.service_name}</h4>
+                        <span class="appointment-status ${statusClass}">${appointment.status}</span>
+                    </div>
+                    <div class="appointment-details">
+                        <p><i class="fas fa-calendar"></i> ${appointmentDate}</p>
+                        <p><i class="fas fa-clock"></i> ${appointment.appointment_time}</p>
+                        ${appointment.notes ? `<p><i class="fas fa-sticky-note"></i> ${appointment.notes}</p>` : ''}
+                    </div>
+                `;
+                
+                appointmentsList.appendChild(appointmentElement);
+            });
+        } else {
+            console.error('Error loading appointments:', result.error);
+            appointmentsList.innerHTML = '<p class="no-appointments">Error loading appointments</p>';
+        }
+    } catch (error) {
+        console.error('Error loading appointments:', error);
+        appointmentsList.innerHTML = '<p class="no-appointments">Error loading appointments</p>';
     }
-    
-    appointments.sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-    appointmentsList.innerHTML = '';
-    
-    appointments.forEach(appointment => {
-        const appointmentElement = document.createElement('div');
-        appointmentElement.className = 'appointment-item';
-        
-        const appointmentDate = new Date(appointment.date).toLocaleDateString();
-        const statusClass = appointment.status === 'confirmed' ? 'status-confirmed' : 'status-pending';
-        
-        appointmentElement.innerHTML = `
-            <div class="appointment-header">
-                <h4>${appointment.service.title}</h4>
-                <span class="appointment-status ${statusClass}">${appointment.status}</span>
-            </div>
-            <div class="appointment-details">
-                <p><i class="fas fa-calendar"></i> ${appointmentDate}</p>
-                <p><i class="fas fa-clock"></i> ${appointment.time}</p>
-                ${appointment.notes ? `<p><i class="fas fa-sticky-note"></i> ${appointment.notes}</p>` : ''}
-            </div>
-        `;
-        
-        appointmentsList.appendChild(appointmentElement);
-    });
 }
 
 function setupEventListeners() {
-    const menuToggle = document.getElementById('menuToggle');
-    const dropdownMenu = document.getElementById('dropdownMenu');
-    
-    if (menuToggle && dropdownMenu) {
-        menuToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('show');
-        });
-        
-        document.addEventListener('click', function() {
-            dropdownMenu.classList.remove('show');
-        });
-    }
-    
-    const accountBtn = document.getElementById('accountBtn');
-    if (accountBtn) {
-        accountBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            dropdownMenu.classList.remove('show');
-        });
-    }
+    // Menu functionality is handled by script.js setupNavigation()
     
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', function(e) {
+        logoutBtn.addEventListener('click', async function(e) {
             e.preventDefault();
+            try {
+                await AuthService.signOut();
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
             localStorage.removeItem('autocare_user');
             localStorage.removeItem('selectedService');
             window.location.href = 'index.html';
@@ -120,6 +117,13 @@ function setupEventListeners() {
     if (cancelEditBtn) {
         cancelEditBtn.addEventListener('click', function() {
             hideEditForm();
+        });
+    }
+    
+    const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+    if (deleteAccountBtn) {
+        deleteAccountBtn.addEventListener('click', function() {
+            showDeleteConfirmation();
         });
     }
 }
@@ -167,6 +171,10 @@ function createEditForm() {
                         <label for="editEmail">Email:</label>
                         <input type="email" id="editEmail" value="${userData.email || ''}" class="form-input">
                     </div>
+                    <div class="form-group">
+                        <label for="editPhone">Phone:</label>
+                        <input type="tel" id="editPhone" value="${userData.phone || ''}" class="form-input" placeholder="e.g. (555) 123-4567">
+                    </div>
                 </div>
                 
                 <div class="form-section">
@@ -174,11 +182,11 @@ function createEditForm() {
                     <div class="form-row">
                         <div class="form-group">
                             <label for="editVehicleMake">Make:</label>
-                            <input type="text" id="editVehicleMake" value="${userData.vehicle?.make || ''}" class="form-input" placeholder="e.g., Toyota">
+                            <input type="text" id="editVehicleMake" value="${userData.vehicle?.make || ''}" class="form-input" placeholder="e.g. Toyota">
                         </div>
                         <div class="form-group">
                             <label for="editVehicleModel">Model:</label>
-                            <input type="text" id="editVehicleModel" value="${userData.vehicle?.model || ''}" class="form-input" placeholder="e.g., Camry">
+                            <input type="text" id="editVehicleModel" value="${userData.vehicle?.model || ''}" class="form-input" placeholder="e.g. Camry">
                         </div>
                     </div>
                     <div class="form-group">
@@ -211,9 +219,10 @@ function createEditForm() {
     setupEventListeners();
 }
 
-function saveAccountChanges() {
+async function saveAccountChanges() {
     const name = document.getElementById('editName').value;
     const email = document.getElementById('editEmail').value;
+    const phone = document.getElementById('editPhone').value;
     const vehicleMake = document.getElementById('editVehicleMake').value;
     const vehicleModel = document.getElementById('editVehicleModel').value;
     const vehicleYear = document.getElementById('editVehicleYear').value;
@@ -231,25 +240,137 @@ function saveAccountChanges() {
     
     const userData = JSON.parse(localStorage.getItem('autocare_user'));
     
-    userData.name = name;
-    userData.email = email;
-    userData.vehicle = {
-        make: vehicleMake || null,
-        model: vehicleModel || null,
-        year: vehicleYear || null
-    };
+    const saveBtn = document.getElementById('saveChangesBtn');
+    const originalText = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    saveBtn.disabled = true;
     
-    localStorage.setItem('autocare_user', JSON.stringify(userData));
-    
-    const existingUsers = JSON.parse(localStorage.getItem('autocare_users') || '[]');
-    const userIndex = existingUsers.findIndex(u => u.email === userData.email);
-    if (userIndex !== -1) {
-        existingUsers[userIndex] = userData;
-        localStorage.setItem('autocare_users', JSON.stringify(existingUsers));
+    try {
+        // First, try to refresh the session if needed
+        const refreshResult = await AuthService.refreshSession();
+        if (!refreshResult.success) {
+            console.warn('Session refresh failed, continuing anyway...');
+        }
+
+        const profileData = {
+            fullName: name,
+            phoneNumber: phone || null,
+            vehicleMake: vehicleMake || null,
+            vehicleModel: vehicleModel || null,
+            vehicleYear: vehicleYear ? parseInt(vehicleYear) : null
+        };
+        
+        const result = await UserService.updateUserProfile(userData.id, profileData);
+        
+        if (result.success) {
+            userData.name = name;
+            userData.email = email;
+            userData.phone = phone;
+            userData.vehicle = {
+                make: vehicleMake || null,
+                model: vehicleModel || null,
+                year: vehicleYear || null
+            };
+            
+            localStorage.setItem('autocare_user', JSON.stringify(userData));
+            
+            alert('Account updated successfully!');
+            
+            hideEditForm();
+            loadAccountData(userData);
+        } else {
+            if (result.error.includes('not authenticated') || result.error.includes('Authentication error')) {
+                alert('Your session has expired. Please sign out and sign in again.');
+                // Optionally redirect to login
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            } else {
+                alert(`Error updating profile: ${result.error}`);
+            }
+        }
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        if (error.message.includes('not authenticated') || error.message.includes('Authentication error')) {
+            alert('Your session has expired. Please sign out and sign in again.');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+        } else {
+            alert('An error occurred while updating your profile. Please try again.');
+        }
+    } finally {
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
     }
+}
+
+function showDeleteConfirmation() {
+    const confirmed = confirm(
+        'WARNING: This will permanently delete your account and all data!\n\n' +
+        'This action cannot be undone. Are you sure you want to delete your account?\n\n' +
+        'Type "DELETE" to confirm:'
+    );
     
-    alert('Account updated successfully!');
+    if (confirmed) {
+        const deleteText = prompt('Type "DELETE" to confirm account deletion:');
+        if (deleteText === 'DELETE') {
+            deleteAccount();
+        } else {
+            alert('Account deletion cancelled.');
+        }
+    }
+}
+
+async function deleteAccount() {
+    const userData = JSON.parse(localStorage.getItem('autocare_user'));
     
-    hideEditForm();
-    loadAccountData(userData);
+    const deleteBtn = document.getElementById('deleteAccountBtn');
+    const originalText = deleteBtn.innerHTML;
+    deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+    deleteBtn.disabled = true;
+    
+    try {
+        // Delete user profile from Supabase
+        const profileResult = await UserService.deleteUserProfile(userData.id);
+        if (!profileResult.success) {
+            console.warn('Error deleting profile:', profileResult.error);
+        }
+        
+        // Delete user appointments from Supabase
+        const appointmentsResult = await AppointmentService.deleteUserAppointments(userData.id);
+        if (!appointmentsResult.success) {
+            console.warn('Error deleting appointments:', appointmentsResult.error);
+        }
+        
+        const accountResult = await AuthService.deleteUserAccount(userData.id);
+        if (!accountResult.success) {
+            console.warn('Cannot delete user account:', accountResult.error);
+            alert('IMPORTANT: Your data has been deleted, but the account still exists.\n\n' +
+                  'To completely delete the account, please contact support or use the Supabase dashboard.\n\n' +
+                  'Your profile and appointments have been removed from the system.');
+        } else {
+            alert('Account completely deleted from the system.');
+        }
+        
+        // Sign out from Supabase
+        await AuthService.signOut();
+        
+        localStorage.removeItem('autocare_user');
+        localStorage.removeItem('selectedService');
+        localStorage.removeItem('appointments');
+        localStorage.removeItem('autocare_users');
+        
+        alert('Account deleted successfully. You will be redirected to the login page.');
+        
+        // Redirect to login page
+        window.location.href = 'index.html';
+        
+    } catch (error) {
+        console.error('Error deleting account:', error);
+        alert('Error deleting account. Please try again or contact support.');
+    } finally {
+        deleteBtn.innerHTML = originalText;
+        deleteBtn.disabled = false;
+    }
 }

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="dashboard">
@@ -114,6 +115,7 @@
                     
                     <div class="customer-form">
                         <h4>Your Information</h4>
+                        <p class="form-note">Your account information is pre-filled below. You can update your phone number if needed.</p>
                         <div class="form-row">
                             <input type="text" id="customerName" placeholder="Full Name" required>
                             <input type="tel" id="customerPhone" placeholder="Phone Number" required>
@@ -142,6 +144,8 @@
         </main>
     </div>
     
+    <script src="supabase-config.js"></script>
+    <script src="script.js"></script>
     <script src="schedule.js"></script>
 </body>
 </html>
