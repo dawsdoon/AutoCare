@@ -7,7 +7,7 @@ const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Authentication functions
-class AuthService {
+export class AuthService {
     // Sign up a new user
     static async signUp(email, password, userData = {}) {
         try {
@@ -66,70 +66,10 @@ class AuthService {
         }
     }
 
-    static async getCurrentUser() {
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            return user;
-        } catch (error) {
-            console.error('Get user error:', error);
-            return null;
-        }
-    }
-
-    // Listen to auth state changes
-    static onAuthStateChange(callback) {
-        return supabaseClient.auth.onAuthStateChange(callback);
-    }
-
-    // Refresh authentication session
-    static async refreshSession() {
-        try {
-            const { data, error } = await supabaseClient.auth.refreshSession();
-            if (error) throw error;
-            return { success: true, data };
-        } catch (error) {
-            console.error('Refresh session error:', error);
-            return { success: false, error: error.message };
-        }
-    }
-
-
-    // Delete user account completely (requires admin privileges)
-    static async deleteUserAccount(userId) {
-        try {
-            // This requires the service role key, but we'll try with the current client
-            const { data, error } = await supabaseClient.auth.admin.deleteUser(userId);
-            
-            if (error) {
-                console.warn('Cannot delete user account with current permissions:', error.message);
-                return { success: false, error: 'Cannot delete user account - requires admin privileges' };
-            }
-            
-            return { success: true, data };
-        } catch (error) {
-            console.error('Delete user account error:', error);
-            return { success: false, error: error.message };
-        }
-    }
 }
 
 // User profile functions
-class UserService {
-    static async getUserProfile(userId) {
-        try {
-            const { data, error } = await supabaseClient
-                .from('user_profiles')
-                .select('*')
-                .eq('user_id', userId)
-                .single();
-
-            if (error) throw error;
-            return { success: true, data };
-        } catch (error) {
-            console.error('Get profile error:', error);
-            return { success: false, error: error.message };
-        }
-    }
+export class UserService {
 
     static async createUserProfile(userId, profileData) {
         try {
@@ -161,22 +101,6 @@ class UserService {
             return { success: true, data };
         } catch (error) {
             console.error('Create profile error:', error);
-            return { success: false, error: error.message };
-        }
-    }
-
-    // Delete user profile
-    static async deleteUserProfile(userId) {
-        try {
-            const { data, error } = await supabaseClient
-                .from('user_profiles')
-                .delete()
-                .eq('user_id', userId);
-
-            if (error) throw error;
-            return { success: true, data };
-        } catch (error) {
-            console.error('Delete profile error:', error);
             return { success: false, error: error.message };
         }
     }
@@ -235,7 +159,7 @@ class UserService {
 }
 
 // Appointment service functions
-class AppointmentService {
+export class AppointmentService {
     static async createAppointment(appointmentData) {
         try {
             const { data, error } = await supabaseClient
@@ -269,7 +193,7 @@ class AppointmentService {
                 .from('appointments')
                 .select('*')
                 .eq('user_id', userId)
-                .order('appointment_date', { ascending: true });
+                .order('appointment_date', { ascending: false });
 
             if (error) throw error;
             return { success: true, data };
@@ -279,58 +203,4 @@ class AppointmentService {
         }
     }
 
-    static async updateAppointmentStatus(appointmentId, status) {
-        try {
-            const { data, error } = await supabaseClient
-                .from('appointments')
-                .update({ status: status })
-                .eq('id', appointmentId)
-                .select()
-                .single();
-
-            if (error) throw error;
-            return { success: true, data };
-        } catch (error) {
-            console.error('Update appointment error:', error);
-            return { success: false, error: error.message };
-        }
-    }
-
-    static async getAvailableTimeSlots(date) {
-        try {
-            const { data, error } = await supabaseClient
-                .from('appointments')
-                .select('appointment_time')
-                .eq('appointment_date', date)
-                .in('status', ['pending', 'confirmed']);
-
-            if (error) throw error;
-            return { success: true, data: data.map(apt => apt.appointment_time) };
-        } catch (error) {
-            console.error('Get time slots error:', error);
-            return { success: false, error: error.message };
-        }
-    }
-
-    // Delete all user appointments
-    static async deleteUserAppointments(userId) {
-        try {
-            const { data, error } = await supabaseClient
-                .from('appointments')
-                .delete()
-                .eq('user_id', userId);
-
-            if (error) throw error;
-            return { success: true, data };
-        } catch (error) {
-            console.error('Delete appointments error:', error);
-            return { success: false, error: error.message };
-        }
-    }
 }
-
-// Make services available globally
-window.AuthService = AuthService;
-window.UserService = UserService;
-window.AppointmentService = AppointmentService;
-window.supabaseClient = supabaseClient;

@@ -1,22 +1,21 @@
 {
   "name": "autocare",
   "version": "1.0.0",
-  "description": "AutoCare - Vehicle service management application built with vanilla JavaScript, HTML5, and CSS3",
-  "main": "index.html",
+  "description": "AutoCare - Vehicle service management application built with React",
+  "type": "module",
   "scripts": {
-    "start": "npx http-server . -p 3000 -o",
-    "dev": "npx live-server --port=3000 --open=/index.html",
-    "build": "echo 'No build process needed for vanilla JS'",
-    "lint": "npx htmlhint *.html && npx stylelint *.css && npx eslint *.js",
-    "format": "npx prettier --write .",
-    "serve": "python -m http.server 3000"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write ."
   },
   "keywords": [
+    "react",
     "javascript",
     "html5",
     "css3",
     "responsive",
-    "vanilla-js",
     "web-app",
     "modern-ui",
     "vehicle-service",
@@ -25,14 +24,21 @@
   ],
   "author": "AutoCare Developer",
   "license": "MIT",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.0"
+  },
   "devDependencies": {
-    "htmlhint": "^1.1.4",
-    "stylelint": "^15.11.0",
-    "stylelint-config-standard": "^34.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.0.0",
     "eslint": "^8.55.0",
+    "eslint-plugin-react": "^7.32.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.0",
     "prettier": "^3.1.0",
-    "live-server": "^1.2.2",
-    "http-server": "^14.1.1"
+    "vite": "^4.4.0"
   },
   "browserslist": [
     "> 1%",
