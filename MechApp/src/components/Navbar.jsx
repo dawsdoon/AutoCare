@@ -58,6 +58,14 @@ const Navbar = () => {
             <i className="fas fa-home"></i>
             Services
           </a>
+          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/faq'); closeMenu(); }} className="dropdown-item">
+            <i className="fas fa-question-circle"></i>
+            FAQ
+          </a>
+          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/contact'); closeMenu(); }} className="dropdown-item">
+            <i className="fas fa-phone"></i>
+            Contact
+          </a>
           <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); closeMenu(); }} className="dropdown-item">
             <i className="fas fa-sign-out-alt"></i>
             Logout

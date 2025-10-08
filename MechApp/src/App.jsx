@@ -6,6 +6,8 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Account from './pages/Account'
 import Schedule from './pages/Schedule'
+import FAQ from './pages/FAQ'
+import Contact from './pages/Contact'
 
 function App() {
   return (
@@ -35,6 +37,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Schedule />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/faq" 
+              element={
+                <ProtectedRoute>
+                  <FAQ />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/contact" 
+              element={
+                <ProtectedRoute>
+                  <Contact />
                 </ProtectedRoute>
               } 
             />

@@ -130,6 +130,12 @@ const Dashboard = () => {
           )}
         </div>
       </main>
+      
+      <footer className="dashboard-footer">
+        <div className="footer-content">
+          <p>Need help? Check out our <a href="/faq" onClick={(e) => { e.preventDefault(); navigate('/faq'); }}>FAQ page</a> for answers to common questions.</p>
+        </div>
+      </footer>
     </div>
   )
 }
