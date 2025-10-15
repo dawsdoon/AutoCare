@@ -1,0 +1,56 @@
+{
+  "name": "autocare",
+  "version": "1.0.0",
+  "description": "AutoCare - Vehicle service management application built with React",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "react",
+    "javascript",
+    "html5",
+    "css3",
+    "responsive",
+    "web-app",
+    "modern-ui",
+    "vehicle-service",
+    "automotive",
+    "dashboard"
+  ],
+  "author": "AutoCare Developer",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react": "^7.32.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.0",
+    "prettier": "^3.1.0",
+    "vite": "^4.4.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/autocare.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/autocare/issues"
+  },
+  "homepage": "https://github.com/yourusername/autocare#readme"
+}
