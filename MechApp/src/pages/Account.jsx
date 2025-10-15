@@ -7,11 +7,17 @@ import { convertVehicleDataFromSupabase, convertVehicleDataToSupabase } from '..
 import './Account.css'
 
 const Account = () => {
+  // Minimal preset options; can be expanded later
+  const oilSpecOptions = ['0W-20', '5W-20', '5W-30', '10W-30', 'Dexos1 Gen 3']
+  const tireSizeOptions = ['195/65R15', '205/55R16', '215/60R16', '225/45R17', '235/45R18']
+
   const [loading, setLoading] = useState(false)
   const [appointmentsLoading, setAppointmentsLoading] = useState(false)
   const [profileData, setProfileData] = useState({
     fullName: '',
-    phoneNumber: ''
+    phoneNumber: '',
+    tireSize: '',
+    oilSpec: ''
   })
   const [vehicleData, setVehicleData] = useState({
     make: '',
@@ -27,10 +33,27 @@ const Account = () => {
     if (user) {
       setProfileData({
         fullName: user.name || '',
-        phoneNumber: user.phone || ''
+        phoneNumber: user.phone || '',
+        tireSize: '',
+        oilSpec: ''
       })
       setVehicleData(convertVehicleDataFromSupabase(user))
       fetchAppointments()
+      // Load tire/oil preferences from localStorage per user
+      try {
+        const extrasKey = `autocare_profile_extras_${user.id}`
+        const raw = localStorage.getItem(extrasKey)
+        if (raw) {
+          const extras = JSON.parse(raw)
+          setProfileData(prev => ({
+            ...prev,
+            tireSize: extras.tireSize || '',
+            oilSpec: extras.oilSpec || ''
+          }))
+        }
+      } catch (_) {
+        // ignore
+      }
     }
   }, [user])
 
@@ -70,8 +93,10 @@ const Account = () => {
     setErrors({})
 
     try {
+      // Persist user profile core data to backend (exclude tire/oil for now)
       const result = await UserService.updateUserProfile(user.id, {
-        ...profileData,
+        fullName: profileData.fullName,
+        phoneNumber: profileData.phoneNumber,
         ...convertVehicleDataToSupabase(vehicleData)
       })
       
@@ -90,6 +115,17 @@ const Account = () => {
         
         // Update the AuthContext with new user data
         updateUser(updatedUser)
+
+        // Save tire/oil preferences locally per user
+        try {
+          const extrasKey = `autocare_profile_extras_${user.id}`
+          localStorage.setItem(extrasKey, JSON.stringify({
+            tireSize: profileData.tireSize,
+            oilSpec: profileData.oilSpec
+          }))
+        } catch (_) {
+          // ignore localStorage failures
+        }
         
         alert('Profile updated successfully!')
       } else {
@@ -141,6 +177,38 @@ const Account = () => {
                       onChange={handleInputChange}
                       className="form-input"
                     />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="tireSize">Tire Size</label>
+                    <select
+                      id="tireSize"
+                      name="tireSize"
+                      value={profileData.tireSize}
+                      onChange={handleInputChange}
+                      className="form-input"
+                    >
+                      <option value="">Select Tire Size</option>
+                      {tireSizeOptions.map(size => (
+                        <option key={size} value={size}>{size}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="oilSpec">Oil Specification</label>
+                    <select
+                      id="oilSpec"
+                      name="oilSpec"
+                      value={profileData.oilSpec}
+                      onChange={handleInputChange}
+                      className="form-input"
+                    >
+                      <option value="">Select Oil Spec</option>
+                      {oilSpecOptions.map(spec => (
+                        <option key={spec} value={spec}>{spec}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
