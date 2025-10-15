@@ -12,7 +12,7 @@ export const vehicleModels = {
   'Buick': ['Encore', 'Envision', 'Enclave', 'LaCrosse', 'Regal'],
   'Cadillac': ['ATS', 'CT4', 'CT5', 'CT6', 'Escalade', 'XT4', 'XT5', 'XT6'],
   'Chevrolet': ['Camaro', 'Corvette', 'Cruze', 'Equinox', 'Impala', 'Malibu', 'Silverado', 'Suburban', 'Tahoe', 'Traverse', 'Trax', 'Volt', 'Bolt'],
-  'Chrysler': ['300', 'Pacifica', 'Voyager'],
+  'Chrysler': ['300', '200', 'Pacifica', 'Voyager'],
   'Dodge': ['Challenger', 'Charger', 'Durango', 'Grand Caravan', 'Journey'],
   'Ford': ['Bronco', 'EcoSport', 'Edge', 'Escape', 'Expedition', 'Explorer', 'F-150', 'F-250', 'F-350', 'Fiesta', 'Focus', 'Fusion', 'Mustang', 'Ranger', 'Transit'],
   'GMC': ['Acadia', 'Canyon', 'Sierra', 'Terrain', 'Yukon'],

@@ -41,7 +41,19 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <div className="nav-logo">
+      <div 
+        className="nav-logo" 
+        role="button" 
+        tabIndex={0}
+        onClick={() => navigate('/dashboard')}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            navigate('/dashboard')
+          }
+        }}
+        style={{ cursor: 'pointer' }}
+      >
         <i className="fas fa-car"></i>
         <h1>AutoCare</h1>
       </div>
