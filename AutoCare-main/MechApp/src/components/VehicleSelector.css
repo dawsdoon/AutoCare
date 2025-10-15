@@ -1,0 +1,83 @@
+/* Vehicle Selector Styles */
+.vehicle-selector {
+  width: 100%;
+}
+
+.vehicle-selector-row {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.vehicle-selector-group {
+  flex: 1;
+  min-width: 150px;
+}
+
+.vehicle-selector-label {
+  display: block;
+  color: #ffffff;
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.required {
+  color: #ff6b6b;
+  margin-left: 2px;
+}
+
+.vehicle-selector-select {
+  width: 100%;
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.vehicle-selector-select:focus {
+  outline: none;
+  border-color: #4a9eff;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+}
+
+.vehicle-selector-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.vehicle-selector-select option {
+  background: #1e1e2e;
+  color: #ffffff;
+  padding: 8px;
+}
+
+.vehicle-selector-select option:hover {
+  background: #4a9eff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .vehicle-selector-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .vehicle-selector-group {
+    min-width: unset;
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vehicle-selector-select {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+}
