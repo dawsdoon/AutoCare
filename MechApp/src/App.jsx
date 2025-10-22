@@ -6,6 +6,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Account from './pages/Account'
 import Schedule from './pages/Schedule'
+import ServiceHistory from './pages/ServiceHistory'
 import FAQ from './pages/FAQ'
 import Contact from './pages/Contact'
 
@@ -37,6 +38,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Schedule />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/service-history" 
+              element={
+                <ProtectedRoute>
+                  <ServiceHistory />
                 </ProtectedRoute>
               } 
             />
