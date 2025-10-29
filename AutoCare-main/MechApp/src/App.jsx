@@ -6,9 +6,11 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Account from './pages/Account'
 import Schedule from './pages/Schedule'
-import ServiceHistory from './pages/ServiceHistory'
 import FAQ from './pages/FAQ'
 import Contact from './pages/Contact'
+import AdminDashboard from './pages/AdminDashboard'
+import AdminHome from './pages/AdminHome'
+import AdminLayout from './pages/AdminLayout'
 
 function App() {
   return (
@@ -42,14 +44,6 @@ function App() {
               } 
             />
             <Route 
-              path="/service-history" 
-              element={
-                <ProtectedRoute>
-                  <ServiceHistory />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
               path="/faq" 
               element={
                 <ProtectedRoute>
@@ -63,6 +57,22 @@ function App() {
                 <ProtectedRoute>
                   <Contact />
                 </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin" 
+              element={
+                <AdminLayout>
+                  <AdminHome />
+                </AdminLayout>
+              } 
+            />
+            <Route 
+              path="/admin/appointments" 
+              element={
+                <AdminLayout>
+                  <AdminDashboard />
+                </AdminLayout>
               } 
             />
             <Route path="*" element={<Navigate to="/" replace />} />
