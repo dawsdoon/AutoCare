@@ -17,19 +17,19 @@ const AdminDashboard = () => {
   const fetchAppointments = async () => {
     setLoading(true)
     try {
-      console.log('🔍 Fetching appointments from Supabase...')
+      console.log('Fetching appointments from Supabase...')
       const result = await AppointmentService.getAllAppointments()
-      console.log('📊 Appointments result:', result)
+      console.log('Appointments result:', result)
       
       if (result.success) {
-        console.log('✅ Appointments fetched successfully:', result.data)
+        console.log('Appointments fetched successfully:', result.data)
         setAppointments(result.data || [])
       } else {
-        console.error('❌ Error fetching appointments:', result.error)
+        console.error('Error fetching appointments:', result.error)
         alert('Error fetching appointments: ' + result.error)
       }
     } catch (error) {
-      console.error('❌ Exception fetching appointments:', error)
+      console.error('Exception fetching appointments:', error)
       alert('Error fetching appointments: ' + error.message)
     } finally {
       setLoading(false)
