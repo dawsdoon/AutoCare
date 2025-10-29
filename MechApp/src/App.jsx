@@ -8,6 +8,9 @@ import Account from './pages/Account'
 import Schedule from './pages/Schedule'
 import FAQ from './pages/FAQ'
 import Contact from './pages/Contact'
+import AdminDashboard from './pages/AdminDashboard'
+import AdminHome from './pages/AdminHome'
+import AdminLayout from './pages/AdminLayout'
 
 function App() {
   return (
@@ -54,6 +57,22 @@ function App() {
                 <ProtectedRoute>
                   <Contact />
                 </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin" 
+              element={
+                <AdminLayout>
+                  <AdminHome />
+                </AdminLayout>
+              } 
+            />
+            <Route 
+              path="/admin/appointments" 
+              element={
+                <AdminLayout>
+                  <AdminDashboard />
+                </AdminLayout>
               } 
             />
             <Route path="*" element={<Navigate to="/" replace />} />

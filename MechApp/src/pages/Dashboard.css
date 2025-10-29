@@ -81,14 +81,7 @@
 }
 
 .service-checkbox-input:checked + .service-checkbox-label::after {
-  content: '✓';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: bold;
+  content: '';
 }
 
 .service-icon {
