@@ -6,6 +6,7 @@ import './Dashboard.css'
 const Dashboard = () => {
   const [selectedServices, setSelectedServices] = useState([])
   const [notes, setNotes] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
   const navigate = useNavigate()
 
   const serviceData = {
@@ -53,6 +54,24 @@ const Dashboard = () => {
     setNotes('')
   }
 
+  //search feature
+  const filteredServices = Object.entries(serviceData).filter(([serviceType, service]) => {
+    const searchLower = searchTerm.toLowerCase()
+    return (
+      service.title.toLowerCase().includes(searchLower) ||
+      service.info.toLowerCase().includes(searchLower) ||
+      serviceType.toLowerCase().includes(searchLower)
+    )
+  })
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value)
+  }
+
+  const clearSearch = () => {
+    setSearchTerm('')
+  }
+
 
   return (
     <div className="dashboard">
@@ -65,8 +84,38 @@ const Dashboard = () => {
             <p>Select the type of appointment you need for your vehicle</p>
           </div>
           
+          <div className="search-section">
+            <div className="search-container">
+              <div className="search-input-wrapper">
+                <i className="fas fa-search search-icon"></i>
+                <input
+                  type="text"
+                  placeholder="Search services..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className="search-input"
+                />
+                {searchTerm && (
+                  <button 
+                    onClick={clearSearch}
+                    className="clear-search-btn"
+                    title="Clear search"
+                  >
+                    <i className="fas fa-times"></i>
+                  </button>
+                )}
+              </div>
+              {searchTerm && (
+                <div className="search-results-info">
+                  {filteredServices.length} service{filteredServices.length !== 1 ? 's' : ''} found
+                </div>
+              )}
+            </div>
+          </div>
+          
           <div className="services-grid">
-            {Object.entries(serviceData).map(([serviceType, service]) => (
+            {filteredServices.length > 0 ? (
+              filteredServices.map(([serviceType, service]) => (
               <div key={serviceType} className="service-card" data-service={serviceType}>
                 <div className="service-checkbox">
                   <input 
@@ -94,7 +143,17 @@ const Dashboard = () => {
                   <span className="duration">{service.duration}</span>
                 </div>
               </div>
-            ))}
+              ))
+            ) : (
+              <div className="no-results">
+                <i className="fas fa-search"></i>
+                <h3>No services found</h3>
+                <p>Try adjusting your search terms or browse all services</p>
+                <button onClick={clearSearch} className="btn-secondary">
+                  Clear Search
+                </button>
+              </div>
+            )}
           </div>
           
           {selectedServices.length > 0 && (
@@ -130,6 +189,12 @@ const Dashboard = () => {
           )}
         </div>
       </main>
+      
+      <footer className="dashboard-footer">
+        <div className="footer-content">
+          <p>Need help? Check out our <a href="/faq" onClick={(e) => { e.preventDefault(); navigate('/faq'); }}>FAQ page</a> for answers to common questions.</p>
+        </div>
+      </footer>
     </div>
   )
 }

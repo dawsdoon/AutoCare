@@ -1,9 +1,10 @@
+import { createClient } from '@supabase/supabase-js'
+
 // Supabase Configuration
 const SUPABASE_URL = 'https://uejioaddqkqzvibzrjnb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlamlvYWRkcWtxenZpYnpyam5iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyNTY4MDgsImV4cCI6MjA3NDgzMjgwOH0.k43iGX0zbP1jfiiTbkI39e1sSZRUS4NJffof60N51kk';
 
 // Initialize Supabase client
-const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Authentication functions
@@ -20,7 +21,8 @@ export class AuthService {
                         vehicle_make: userData.vehicleMake || null,
                         vehicle_model: userData.vehicleModel || null,
                         vehicle_year: userData.vehicleYear || null,
-                        full_name: userData.fullName || null
+                        full_name: userData.fullName || null,
+                        role: userData.role || 'customer'
                     }
                 }
             });
@@ -199,6 +201,46 @@ export class AppointmentService {
             return { success: true, data };
         } catch (error) {
             console.error('Get appointments error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    static async getAllAppointments() {
+        try {
+            console.log('🔍 Supabase: Fetching all appointments...');
+            const { data, error } = await supabaseClient
+                .from('appointments')
+                .select('*')
+                .order('appointment_date', { ascending: false });
+
+            console.log('📊 Supabase response:', { data, error });
+
+            if (error) {
+                console.error('❌ Supabase error:', error);
+                throw error;
+            }
+            
+            console.log('✅ Supabase: Appointments fetched successfully, count:', data?.length || 0);
+            return { success: true, data };
+        } catch (error) {
+            console.error('❌ Get all appointments error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    static async updateAppointmentStatus(appointmentId, status) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('appointments')
+                .update({ status: status })
+                .eq('id', appointmentId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return { success: true, data };
+        } catch (error) {
+            console.error('Update appointment status error:', error);
             return { success: false, error: error.message };
         }
     }
