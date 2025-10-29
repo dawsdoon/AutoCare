@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import './AdminNavbar.css'
 
-const Navbar = () => {
+const AdminNavbar = () => {
   const { signOut, user } = useAuth()
   const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -26,7 +27,7 @@ const Navbar = () => {
   }
 
   // Close menu when clicking outside
-  useEffect(() => {
+  React.useEffect(() => {
     const handleClickOutside = (event) => {
       if (isMenuOpen && !event.target.closest('.nav-actions')) {
         setIsMenuOpen(false)
@@ -40,50 +41,39 @@ const Navbar = () => {
   }, [isMenuOpen])
 
   return (
-    <nav className="navbar">
+    <nav className="admin-navbar">
       <div 
         className="nav-logo" 
         role="button" 
         tabIndex={0}
-        onClick={() => navigate('/dashboard')}
+        onClick={() => navigate('/admin')}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
-            navigate('/dashboard')
+            navigate('/admin')
           }
         }}
         style={{ cursor: 'pointer' }}
       >
-        <i className="fas fa-car"></i>
-        <h1>AutoCare</h1>
+        <i className="fas fa-cog"></i>
+        <h1>Admin Panel</h1>
       </div>
       <div className="nav-actions">
+        <div className="admin-user-info">
+          <span className="admin-welcome">Welcome, {user?.name || 'Admin'}</span>
+        </div>
         <button className="menu-toggle" onClick={toggleMenu}>
           <i className="fas fa-bars"></i>
         </button>
         <div className={`dropdown-menu ${isMenuOpen ? 'show' : ''}`}>
-          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/account'); closeMenu(); }} className="dropdown-item">
-            <i className="fas fa-user"></i>
-            My Account
+          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/admin'); closeMenu(); }} className="dropdown-item">
+            <i className="fas fa-tachometer-alt"></i>
+            Dashboard
           </a>
-          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/dashboard'); closeMenu(); }} className="dropdown-item">
-            <i className="fas fa-home"></i>
-            Services
+          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/admin/appointments'); closeMenu(); }} className="dropdown-item">
+            <i className="fas fa-calendar-check"></i>
+            Appointments
           </a>
-          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/faq'); closeMenu(); }} className="dropdown-item">
-            <i className="fas fa-question-circle"></i>
-            FAQ
-          </a>
-          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/contact'); closeMenu(); }} className="dropdown-item">
-            <i className="fas fa-phone"></i>
-            Contact
-          </a>
-          {user && user.role === 'admin' && (
-            <a href="#" onClick={(e) => { e.preventDefault(); navigate('/admin'); closeMenu(); }} className="dropdown-item">
-              <i className="fas fa-cog"></i>
-              Admin Panel
-            </a>
-          )}
           <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); closeMenu(); }} className="dropdown-item">
             <i className="fas fa-sign-out-alt"></i>
             Logout
@@ -94,4 +84,4 @@ const Navbar = () => {
   )
 }
 
-export default Navbar
+export default AdminNavbar

@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }) => {
           id: result.data.user.id,
           email: result.data.user.email,
           name: result.data.user.user_metadata?.full_name || 'User',
+          role: result.data.user.user_metadata?.role || 'customer',
           vehicle: {
             make: result.data.user.user_metadata?.vehicle_make || null,
             model: result.data.user.user_metadata?.vehicle_model || null,
@@ -62,6 +63,7 @@ export const AuthProvider = ({ children }) => {
           id: result.data.user.id,
           email: result.data.user.email,
           name: result.data.user.user_metadata?.full_name || userData.fullName,
+          role: result.data.user.user_metadata?.role || 'customer',
           vehicle: {
             make: result.data.user.user_metadata?.vehicle_make || null,
             model: result.data.user.user_metadata?.vehicle_model || null,

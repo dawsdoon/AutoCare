@@ -77,7 +77,13 @@ const Login = () => {
       const result = await signIn(signinData.email, signinData.password)
       
       if (result.success) {
-        navigate('/dashboard')
+        // Check if user is admin and redirect accordingly
+        const userRole = result.data?.user?.user_metadata?.role || 'customer'
+        if (userRole === 'admin') {
+          navigate('/admin')
+        } else {
+          navigate('/dashboard')
+        }
       } else {
         showError('signinError', result.error)
       }
@@ -151,6 +157,7 @@ const Login = () => {
       setLoading(false)
     }
   }
+
 
   return (
     <div className="container">
