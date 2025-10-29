@@ -207,23 +207,23 @@ export class AppointmentService {
 
     static async getAllAppointments() {
         try {
-            console.log('🔍 Supabase: Fetching all appointments...');
+            console.log('Supabase: Fetching all appointments...');
             const { data, error } = await supabaseClient
                 .from('appointments')
                 .select('*')
                 .order('appointment_date', { ascending: false });
 
-            console.log('📊 Supabase response:', { data, error });
+            console.log('Supabase response:', { data, error });
 
             if (error) {
-                console.error('❌ Supabase error:', error);
+                console.error('Supabase error:', error);
                 throw error;
             }
             
-            console.log('✅ Supabase: Appointments fetched successfully, count:', data?.length || 0);
+            console.log('Supabase: Appointments fetched successfully, count:', data?.length || 0);
             return { success: true, data };
         } catch (error) {
-            console.error('❌ Get all appointments error:', error);
+            console.error('Get all appointments error:', error);
             return { success: false, error: error.message };
         }
     }
