@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { toast } from 'react-toastify'
 import { useAuth } from '../contexts/AuthContext'
 import { UserService, AppointmentService } from '../services/supabase'
 import Navbar from '../components/Navbar'
@@ -127,7 +128,7 @@ const Account = () => {
           // ignore localStorage failures
         }
         
-        alert('Profile updated successfully!')
+        toast.success('Profile updated successfully!')
       } else {
         setErrors({ general: result.error })
       }

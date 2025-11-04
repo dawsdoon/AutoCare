@@ -245,4 +245,83 @@ export class AppointmentService {
         }
     }
 
+    static async cancelAppointment(appointmentId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('appointments')
+                .update({ status: 'cancelled' })
+                .eq('id', appointmentId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return { success: true, data };
+        } catch (error) {
+            console.error('Cancel appointment error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    static async rescheduleAppointment(appointmentId, newDate, newTime) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('appointments')
+                .update({ 
+                    appointment_date: newDate,
+                    appointment_time: newTime,
+                    status: 'pending'
+                })
+                .eq('id', appointmentId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return { success: true, data };
+        } catch (error) {
+            console.error('Reschedule appointment error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    static async uploadPhoto(file, appointmentId) {
+        try {
+            const fileExt = file.name.split('.').pop()
+            const fileName = `${appointmentId}_${Date.now()}.${fileExt}`
+            const filePath = `appointments/${appointmentId}/${fileName}`
+
+            const { error: uploadError } = await supabaseClient.storage
+                .from('appointment-photos')
+                .upload(filePath, file)
+
+            if (uploadError) throw uploadError
+
+            const { data: { publicUrl } } = supabaseClient.storage
+                .from('appointment-photos')
+                .getPublicUrl(filePath)
+
+            // Update appointment with photo URL
+            const { data: existingAppointment } = await supabaseClient
+                .from('appointments')
+                .select('photos')
+                .eq('id', appointmentId)
+                .single()
+
+            const photos = existingAppointment?.photos || []
+            photos.push(publicUrl)
+
+            const { data, error } = await supabaseClient
+                .from('appointments')
+                .update({ photos: photos })
+                .eq('id', appointmentId)
+                .select()
+                .single()
+
+            if (error) throw error
+            return { success: true, data, photoUrl: publicUrl }
+        } catch (error) {
+            console.error('Upload photo error:', error)
+            return { success: false, error: error.message }
+        }
+    }
+
 }

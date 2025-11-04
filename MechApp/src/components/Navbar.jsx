@@ -70,6 +70,10 @@ const Navbar = () => {
             <i className="fas fa-home"></i>
             Services
           </a>
+          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/service-history'); closeMenu(); }} className="dropdown-item">
+            <i className="fas fa-history"></i>
+            Service History
+          </a>
           <a href="#" onClick={(e) => { e.preventDefault(); navigate('/faq'); closeMenu(); }} className="dropdown-item">
             <i className="fas fa-question-circle"></i>
             FAQ
