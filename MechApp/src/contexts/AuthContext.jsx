@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { AuthService } from '../services/supabase'
+import { supabaseClient } from '../services/supabase'
 
 const AuthContext = createContext()
 
@@ -16,17 +17,88 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check for existing user in localStorage
-    const storedUser = localStorage.getItem('autocare_user')
-    if (storedUser) {
+    // Check Supabase session first to ensure it's valid
+    const checkSession = async () => {
       try {
-        setUser(JSON.parse(storedUser))
+        const { data: { session }, error } = await supabaseClient.auth.getSession()
+        
+        if (error) {
+          console.error('Error getting session:', error)
+          setLoading(false)
+          return
+        }
+
+        if (session?.user) {
+          // Session exists, use it
+          const userData = {
+            id: session.user.id,
+            email: session.user.email,
+            name: session.user.user_metadata?.full_name || 'User',
+            role: session.user.user_metadata?.role || 'customer',
+            vehicle: {
+              make: session.user.user_metadata?.vehicle_make || null,
+              model: session.user.user_metadata?.vehicle_model || null,
+              year: session.user.user_metadata?.vehicle_year || null
+            }
+          }
+          setUser(userData)
+          localStorage.setItem('autocare_user', JSON.stringify(userData))
+        } else {
+          // No session, check localStorage as fallback
+          const storedUser = localStorage.getItem('autocare_user')
+          if (storedUser) {
+            try {
+              setUser(JSON.parse(storedUser))
+            } catch (error) {
+              console.error('Error parsing stored user:', error)
+              localStorage.removeItem('autocare_user')
+            }
+          }
+        }
       } catch (error) {
-        console.error('Error parsing stored user:', error)
-        localStorage.removeItem('autocare_user')
+        console.error('Error checking session:', error)
+        // Fallback to localStorage
+        const storedUser = localStorage.getItem('autocare_user')
+        if (storedUser) {
+          try {
+            setUser(JSON.parse(storedUser))
+          } catch (parseError) {
+            console.error('Error parsing stored user:', parseError)
+            localStorage.removeItem('autocare_user')
+          }
+        }
+      } finally {
+        setLoading(false)
       }
     }
-    setLoading(false)
+
+    checkSession()
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        const userData = {
+          id: session.user.id,
+          email: session.user.email,
+          name: session.user.user_metadata?.full_name || 'User',
+          role: session.user.user_metadata?.role || 'customer',
+          vehicle: {
+            make: session.user.user_metadata?.vehicle_make || null,
+            model: session.user.user_metadata?.vehicle_model || null,
+            year: session.user.user_metadata?.vehicle_year || null
+          }
+        }
+        setUser(userData)
+        localStorage.setItem('autocare_user', JSON.stringify(userData))
+      } else {
+        setUser(null)
+        localStorage.removeItem('autocare_user')
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
   const signIn = async (email, password) => {
