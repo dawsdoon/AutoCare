@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import Navbar from '../components/Navbar'
 import './Dashboard.css'
 
@@ -35,7 +36,7 @@ const Dashboard = () => {
 
   const handleBookAppointment = () => {
     if (selectedServices.length === 0) {
-      alert('Please select at least one service first')
+      toast.warning('Please select at least one service first')
       return
     }
 

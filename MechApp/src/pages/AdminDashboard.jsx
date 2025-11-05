@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { toast } from 'react-toastify'
 import { useAuth } from '../contexts/AuthContext'
 import { AppointmentService } from '../services/supabase'
 import AdminNavbar from '../components/AdminNavbar'
@@ -26,11 +27,11 @@ const AdminDashboard = () => {
         setAppointments(result.data || [])
       } else {
         console.error('Error fetching appointments:', result.error)
-        alert('Error fetching appointments: ' + result.error)
+        toast.error('Error fetching appointments: ' + result.error)
       }
     } catch (error) {
       console.error('Exception fetching appointments:', error)
-      alert('Error fetching appointments: ' + error.message)
+      toast.error('Error fetching appointments: ' + error.message)
     } finally {
       setLoading(false)
     }
@@ -40,14 +41,14 @@ const AdminDashboard = () => {
     try {
       const result = await AppointmentService.updateAppointmentStatus(appointmentId, 'approved')
       if (result.success) {
-        alert('Appointment approved successfully!')
+        toast.success('Appointment approved successfully!')
         fetchAppointments() // Refresh the list
       } else {
-        alert('Error approving appointment: ' + result.error)
+        toast.error('Error approving appointment: ' + result.error)
       }
     } catch (error) {
       console.error('Error approving appointment:', error)
-      alert('Error approving appointment')
+      toast.error('Error approving appointment')
     }
   }
 
@@ -55,14 +56,14 @@ const AdminDashboard = () => {
     try {
       const result = await AppointmentService.updateAppointmentStatus(appointmentId, 'rejected')
       if (result.success) {
-        alert('Appointment rejected successfully!')
+        toast.success('Appointment rejected successfully!')
         fetchAppointments() // Refresh the list
       } else {
-        alert('Error rejecting appointment: ' + result.error)
+        toast.error('Error rejecting appointment: ' + result.error)
       }
     } catch (error) {
       console.error('Error rejecting appointment:', error)
-      alert('Error rejecting appointment')
+      toast.error('Error rejecting appointment')
     }
   }
 

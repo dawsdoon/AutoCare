@@ -1,11 +1,13 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
 import { AuthProvider } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Account from './pages/Account'
 import Schedule from './pages/Schedule'
+import ServiceHistory from './pages/ServiceHistory'
 import FAQ from './pages/FAQ'
 import Contact from './pages/Contact'
 import AdminDashboard from './pages/AdminDashboard'
@@ -17,6 +19,18 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="App">
+          <ToastContainer 
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
           <Routes>
             <Route path="/" element={<Login />} />
             <Route 
@@ -40,6 +54,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Schedule />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/service-history" 
+              element={
+                <ProtectedRoute>
+                  <ServiceHistory />
                 </ProtectedRoute>
               } 
             />

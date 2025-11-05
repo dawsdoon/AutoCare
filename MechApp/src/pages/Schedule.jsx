@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { useAuth } from '../contexts/AuthContext'
 import { AppointmentService } from '../services/supabase'
 import Navbar from '../components/Navbar'
@@ -16,6 +17,9 @@ const Schedule = () => {
   })
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
+  const [photos, setPhotos] = useState([])
+  const [photoPreviews, setPhotoPreviews] = useState([])
+  const [uploadingPhotos, setUploadingPhotos] = useState(false)
   
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -47,6 +51,52 @@ const Schedule = () => {
       ...prev,
       [name]: value
     }))
+  }
+
+  const handlePhotoChange = (e) => {
+    const files = Array.from(e.target.files)
+    if (files.length === 0) return
+
+    // Validate file types and sizes
+    const validFiles = files.filter(file => {
+      if (!file.type.startsWith('image/')) {
+        toast.error(`${file.name} is not an image file`)
+        return false
+      }
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast.error(`${file.name} is too large. Maximum size is 5MB`)
+        return false
+      }
+      return true
+    })
+
+    if (validFiles.length === 0) return
+
+    // Limit to 5 photos total
+    const totalPhotos = photos.length + validFiles.length
+    if (totalPhotos > 5) {
+      toast.warning('Maximum 5 photos allowed. Only first 5 will be uploaded.')
+      validFiles.splice(5 - photos.length)
+    }
+
+    setPhotos(prev => [...prev, ...validFiles])
+
+    // Create previews
+    validFiles.forEach(file => {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPhotoPreviews(prev => [...prev, { file, preview: reader.result }])
+      }
+      reader.readAsDataURL(file)
+    })
+
+    // Reset input
+    e.target.value = ''
+  }
+
+  const removePhoto = (index) => {
+    setPhotos(prev => prev.filter((_, i) => i !== index))
+    setPhotoPreviews(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleSubmit = async (e) => {
@@ -88,13 +138,31 @@ const Schedule = () => {
       const result = await AppointmentService.createAppointment(appointmentPayload)
       
       if (result.success) {
-        alert('Appointment booked successfully!')
+        // Upload photos if any
+        if (photos.length > 0) {
+          setUploadingPhotos(true)
+          try {
+            for (const photo of photos) {
+              await AppointmentService.uploadPhoto(photo, result.data.id)
+            }
+            toast.success('Photos uploaded successfully!')
+          } catch (photoError) {
+            console.error('Photo upload error:', photoError)
+            toast.warning('Appointment created but some photos failed to upload')
+          } finally {
+            setUploadingPhotos(false)
+          }
+        }
+        
+        toast.success('Appointment booked successfully!')
         localStorage.removeItem('selectedServices')
         navigate('/dashboard')
       } else {
+        toast.error(result.error || 'Failed to book appointment')
         setErrors({ general: result.error })
       }
     } catch (error) {
+      toast.error('An error occurred. Please try again.')
       setErrors({ general: 'An error occurred. Please try again.' })
     } finally {
       setLoading(false)
@@ -212,6 +280,50 @@ const Schedule = () => {
                 </div>
               </div>
               
+              <div className="form-section">
+                <h3>Upload Photos (Optional)</h3>
+                <p className="photo-upload-info">
+                  Upload photos of your vehicle issues or areas that need attention. 
+                  This helps our technicians better understand your needs.
+                </p>
+                <div className="photo-upload-area">
+                  <input
+                    type="file"
+                    id="photo-upload"
+                    accept="image/*"
+                    multiple
+                    onChange={handlePhotoChange}
+                    className="photo-input"
+                    disabled={photos.length >= 5}
+                  />
+                  <label htmlFor="photo-upload" className="photo-upload-label">
+                    <i className="fas fa-camera"></i>
+                    {photos.length >= 5 ? 'Maximum 5 photos reached' : 'Choose Photos (Max 5)'}
+                  </label>
+                  {photos.length > 0 && (
+                    <p className="photo-count">{photos.length} photo(s) selected (Max 5)</p>
+                  )}
+                  
+                  {photoPreviews.length > 0 && (
+                    <div className="photo-preview-grid">
+                      {photoPreviews.map((preview, index) => (
+                        <div key={index} className="photo-preview-item">
+                          <img src={preview.preview} alt={`Preview ${index + 1}`} />
+                          <button
+                            type="button"
+                            className="remove-photo-btn"
+                            onClick={() => removePhoto(index)}
+                            aria-label="Remove photo"
+                          >
+                            <i className="fas fa-times"></i>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
               {errors.general && (
                 <div className="error-message show">{errors.general}</div>
               )}
@@ -220,11 +332,11 @@ const Schedule = () => {
                 <button type="button" onClick={() => navigate('/dashboard')} className="btn-secondary">
                   Back to Services
                 </button>
-                <button type="submit" className="btn-primary" disabled={loading}>
-                  {loading ? (
+                <button type="submit" className="btn-primary" disabled={loading || uploadingPhotos}>
+                  {loading || uploadingPhotos ? (
                     <>
                       <i className="fas fa-spinner fa-spin"></i>
-                      Booking...
+                      {uploadingPhotos ? 'Uploading Photos...' : 'Booking...'}
                     </>
                   ) : (
                     'Book Appointment'

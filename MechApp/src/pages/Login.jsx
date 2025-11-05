@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { useAuth } from '../contexts/AuthContext'
 import { UserService } from '../services/supabase'
 import VehicleSelector from '../components/VehicleSelector'
@@ -146,7 +147,7 @@ const Login = () => {
           // Continue anyway - profile can be created later
         }
         
-        alert('Account created successfully! Welcome to AutoCare!')
+        toast.success('Account created successfully! Welcome to AutoCare!')
         navigate('/dashboard')
       } else {
         showError('emailError', result.error)

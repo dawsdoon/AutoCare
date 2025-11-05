@@ -205,6 +205,96 @@
   color: #ffffff;
 }
 
+/* Photo Upload Styles */
+.photo-upload-info {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.photo-upload-area {
+  margin-top: 15px;
+}
+
+.photo-input {
+  display: none;
+}
+
+.photo-upload-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: rgba(74, 158, 255, 0.1);
+  border: 2px dashed #4a9eff;
+  border-radius: 8px;
+  color: #4a9eff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.photo-upload-label:hover:not(:has(+ .photo-input:disabled)) {
+  background: rgba(74, 158, 255, 0.2);
+  border-color: #357abd;
+}
+
+.photo-upload-label:has(+ .photo-input:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.photo-count {
+  color: #b0b0b0;
+  font-size: 0.85rem;
+  margin-top: 10px;
+}
+
+.photo-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.photo-preview-item {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.photo-preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-photo-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(231, 76, 60, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.3s ease;
+  font-size: 0.85rem;
+}
+
+.remove-photo-btn:hover {
+  background: rgba(192, 57, 43, 1);
+  transform: scale(1.1);
+}
+
 @media (max-width: 768px) {
   .schedule-content {
     grid-template-columns: 1fr;
@@ -218,5 +308,10 @@
   
   .form-actions {
     flex-direction: column;
+  }
+  
+  .photo-preview-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
   }
 }

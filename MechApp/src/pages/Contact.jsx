@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import Navbar from '../components/Navbar'
 import './Contact.css'
 
@@ -22,7 +23,7 @@ const handleInputChange = (e) => {
 
 const handleSubmit = (e) => {
     e.preventDefault()
-    alert('Thank you for your message! We will get back to you soon.')
+    toast.success('Thank you for your message! We will get back to you soon.')
     setFormData({
     name: '',
     email: '',
