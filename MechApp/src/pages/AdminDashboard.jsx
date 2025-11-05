@@ -19,19 +19,34 @@ const AdminDashboard = () => {
     setLoading(true)
     try {
       console.log('Fetching appointments from Supabase...')
+      console.log('Current user:', user)
+      
       const result = await AppointmentService.getAllAppointments()
       console.log('Appointments result:', result)
       
       if (result.success) {
         console.log('Appointments fetched successfully:', result.data)
-        setAppointments(result.data || [])
+        const appointmentsList = result.data || []
+        console.log(`Found ${appointmentsList.length} appointments`)
+        setAppointments(appointmentsList)
+        
+        if (appointmentsList.length === 0) {
+          console.warn('No appointments found in database')
+          toast.info('No appointments found in the database')
+        }
       } else {
         console.error('Error fetching appointments:', result.error)
-        toast.error('Error fetching appointments: ' + result.error)
+        const errorMessage = result.error || 'Unknown error occurred'
+        toast.error('Error fetching appointments: ' + errorMessage)
+        
+        // If authentication error, suggest re-login
+        if (errorMessage.includes('Authentication') || errorMessage.includes('auth')) {
+          console.error('Authentication issue detected. User may need to sign in again.')
+        }
       }
     } catch (error) {
       console.error('Exception fetching appointments:', error)
-      toast.error('Error fetching appointments: ' + error.message)
+      toast.error('Error fetching appointments: ' + (error.message || 'Unknown error'))
     } finally {
       setLoading(false)
     }

@@ -5,7 +5,7 @@ const SUPABASE_URL = 'https://uejioaddqkqzvibzrjnb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlamlvYWRkcWtxenZpYnpyam5iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyNTY4MDgsImV4cCI6MjA3NDgzMjgwOH0.k43iGX0zbP1jfiiTbkI39e1sSZRUS4NJffof60N51kk';
 
 // Initialize Supabase client
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Authentication functions
 export class AuthService {
@@ -208,23 +208,51 @@ export class AppointmentService {
     static async getAllAppointments() {
         try {
             console.log('Supabase: Fetching all appointments...');
+            
+            // Verify user is authenticated
+            const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+            if (authError) {
+                console.error('Auth error when fetching appointments:', authError);
+                return { success: false, error: 'Authentication required: ' + authError.message };
+            }
+            
+            if (!user) {
+                console.error('No authenticated user found');
+                return { success: false, error: 'Authentication required. Please sign in again.' };
+            }
+            
+            console.log('Authenticated user:', { id: user.id, email: user.email, role: user.user_metadata?.role });
+            
+            // Check if user is admin
+            const userRole = user.user_metadata?.role || 'customer';
+            if (userRole !== 'admin') {
+                console.warn('Non-admin user attempted to fetch all appointments');
+                // Still allow the query, but log the warning
+            }
+            
             const { data, error } = await supabaseClient
                 .from('appointments')
                 .select('*')
                 .order('appointment_date', { ascending: false });
 
-            console.log('Supabase response:', { data, error });
+            console.log('Supabase response:', { data, error, rowCount: data?.length || 0 });
 
             if (error) {
-                console.error('Supabase error:', error);
+                console.error('Supabase query error:', error);
+                console.error('Error details:', {
+                    message: error.message,
+                    details: error.details,
+                    hint: error.hint,
+                    code: error.code
+                });
                 throw error;
             }
             
             console.log('Supabase: Appointments fetched successfully, count:', data?.length || 0);
-            return { success: true, data };
+            return { success: true, data: data || [] };
         } catch (error) {
             console.error('Get all appointments error:', error);
-            return { success: false, error: error.message };
+            return { success: false, error: error.message || 'Failed to fetch appointments' };
         }
     }
 
