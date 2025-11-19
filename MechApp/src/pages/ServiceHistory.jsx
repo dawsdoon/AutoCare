@@ -18,6 +18,8 @@ const ServiceHistory = () => {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [rescheduleModal, setRescheduleModal] = useState(null)
   const [rescheduleData, setRescheduleData] = useState({ date: '', time: '' })
+  const [searchQuery, setSearchQuery] = useState('')
+  const [dateRange, setDateRange] = useState({ start: '', end: '' })
   
   const { user } = useAuth()
 
@@ -109,7 +111,9 @@ const ServiceHistory = () => {
   }
 
   const handleDownloadAllPDF = () => {
-    if (filteredAppointments.length === 0) {
+    const appointmentsToDownload = filteredAppointments.length > 0 ? filteredAppointments : appointments
+    
+    if (appointmentsToDownload.length === 0) {
       toast.warning('No appointments to download')
       return
     }
@@ -119,7 +123,7 @@ const ServiceHistory = () => {
 
     // Title
     doc.setFontSize(18)
-    doc.text('Complete Service History', 105, startY, { align: 'center' })
+    doc.text(filteredAppointments.length !== appointments.length ? 'Filtered Service History' : 'Complete Service History', 105, startY, { align: 'center' })
     startY += 10
 
     // Company Info
@@ -134,11 +138,16 @@ const ServiceHistory = () => {
 
     // Summary
     doc.setFontSize(12)
-    doc.text(`Total Appointments: ${filteredAppointments.length}`, 14, startY)
+    doc.text(`Total Appointments: ${appointmentsToDownload.length}`, 14, startY)
+    if (filteredAppointments.length !== appointments.length) {
+      startY += 6
+      doc.setFontSize(10)
+      doc.text(`(Filtered from ${appointments.length} total appointments)`, 14, startY)
+    }
     startY += 10
 
     // Loop through appointments
-    filteredAppointments.forEach((appointment, index) => {
+    appointmentsToDownload.forEach((appointment, index) => {
       // Check if we need a new page
       if (startY > 250) {
         doc.addPage()
@@ -205,7 +214,7 @@ const ServiceHistory = () => {
       }
 
       // Separator
-      if (index < filteredAppointments.length - 1) {
+      if (index < appointmentsToDownload.length - 1) {
         if (startY > 250) {
           doc.addPage()
           startY = 20
@@ -322,9 +331,57 @@ const ServiceHistory = () => {
   }
 
   const filteredAppointments = appointments.filter(appointment => {
-    if (filterStatus === 'all') return true
-    return appointment.status === filterStatus
+    // Status filter
+    if (filterStatus !== 'all' && appointment.status !== filterStatus) {
+      return false
+    }
+    
+    // Search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase()
+      const serviceName = appointment.service_name?.toLowerCase() || ''
+      const serviceDesc = appointment.service_description?.toLowerCase() || ''
+      const customerName = appointment.customer_name?.toLowerCase() || ''
+      const notes = appointment.notes?.toLowerCase() || ''
+      
+      if (!serviceName.includes(query) && 
+          !serviceDesc.includes(query) && 
+          !customerName.includes(query) &&
+          !notes.includes(query)) {
+        return false
+      }
+    }
+    
+    // Date range filter
+    if (dateRange.start || dateRange.end) {
+      const appointmentDate = new Date(appointment.appointment_date)
+      appointmentDate.setHours(0, 0, 0, 0)
+      
+      if (dateRange.start) {
+        const startDate = new Date(dateRange.start)
+        startDate.setHours(0, 0, 0, 0)
+        if (appointmentDate < startDate) {
+          return false
+        }
+      }
+      
+      if (dateRange.end) {
+        const endDate = new Date(dateRange.end)
+        endDate.setHours(23, 59, 59, 999)
+        if (appointmentDate > endDate) {
+          return false
+        }
+      }
+    }
+    
+    return true
   })
+  
+  const clearFilters = () => {
+    setSearchQuery('')
+    setDateRange({ start: '', end: '' })
+    setFilterStatus('all')
+  }
 
   const getServiceIcon = (serviceName) => {
     const name = serviceName.toLowerCase()
@@ -337,7 +394,7 @@ const ServiceHistory = () => {
   }
 
   const getAppointmentsForDate = (date) => {
-    return appointments.filter(apt => {
+    return filteredAppointments.filter(apt => {
       const aptDate = new Date(apt.appointment_date)
       return aptDate.toDateString() === date.toDateString()
     })
@@ -345,7 +402,10 @@ const ServiceHistory = () => {
 
   const tileContent = ({ date, view }) => {
     if (view === 'month') {
-      const dayAppointments = getAppointmentsForDate(date)
+      const dayAppointments = filteredAppointments.filter(apt => {
+        const aptDate = new Date(apt.appointment_date)
+        return aptDate.toDateString() === date.toDateString()
+      })
       if (dayAppointments.length > 0) {
         return (
           <div className="calendar-appointment-indicator">
@@ -360,7 +420,10 @@ const ServiceHistory = () => {
 
   const tileClassName = ({ date, view }) => {
     if (view === 'month') {
-      const dayAppointments = getAppointmentsForDate(date)
+      const dayAppointments = filteredAppointments.filter(apt => {
+        const aptDate = new Date(apt.appointment_date)
+        return aptDate.toDateString() === date.toDateString()
+      })
       if (dayAppointments.length > 0) {
         return 'has-appointments'
       }
@@ -409,6 +472,76 @@ const ServiceHistory = () => {
             </div>
           </div>
 
+          {/* Search and Filter Section */}
+          {appointments.length > 0 && (
+            <div className="search-filter-section">
+              <div className="search-bar">
+                <i className="fas fa-search"></i>
+                <input
+                  type="text"
+                  placeholder="Search by service name, description, or notes..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="search-input"
+                />
+                {searchQuery && (
+                  <button 
+                    className="clear-search-btn"
+                    onClick={() => setSearchQuery('')}
+                    title="Clear search"
+                  >
+                    <i className="fas fa-times"></i>
+                  </button>
+                )}
+              </div>
+              
+              <div className="date-range-filters">
+                <div className="date-filter-group">
+                  <label htmlFor="start-date">
+                    <i className="fas fa-calendar-alt"></i>
+                    From Date
+                  </label>
+                  <input
+                    type="date"
+                    id="start-date"
+                    value={dateRange.start}
+                    onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
+                    className="date-input"
+                  />
+                </div>
+                <div className="date-filter-group">
+                  <label htmlFor="end-date">
+                    <i className="fas fa-calendar-alt"></i>
+                    To Date
+                  </label>
+                  <input
+                    type="date"
+                    id="end-date"
+                    value={dateRange.end}
+                    onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
+                    className="date-input"
+                  />
+                </div>
+                {(searchQuery || dateRange.start || dateRange.end || filterStatus !== 'all') && (
+                  <button 
+                    className="clear-filters-btn"
+                    onClick={clearFilters}
+                    title="Clear all filters"
+                  >
+                    <i className="fas fa-times-circle"></i>
+                    Clear Filters
+                  </button>
+                )}
+              </div>
+              
+              {filteredAppointments.length !== appointments.length && (
+                <div className="filter-results-info">
+                  Showing {filteredAppointments.length} of {appointments.length} appointments
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="view-toggle">
             <button 
               className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
@@ -439,6 +572,13 @@ const ServiceHistory = () => {
               <h3>No Service History</h3>
               <p>You haven't booked any appointments yet.</p>
               <a href="/dashboard" className="btn-primary">Book Your First Service</a>
+            </div>
+          ) : filteredAppointments.length === 0 ? (
+            <div className="empty-state">
+              <i className="fas fa-search"></i>
+              <h3>No Appointments Found</h3>
+              <p>No appointments match your search or filter criteria.</p>
+              <button onClick={clearFilters} className="btn-primary">Clear Filters</button>
             </div>
           ) : (
             <>

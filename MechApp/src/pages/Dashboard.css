@@ -14,6 +14,147 @@
   margin: 0 auto;
 }
 
+/* Appointment Reminder Banner */
+.appointment-reminder-banner {
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
+  position: relative;
+  animation: slideInDown 0.5s ease;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reminder-icon {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.reminder-icon i {
+  color: white;
+  font-size: 1.5rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.reminder-content {
+  flex: 1;
+  color: white;
+}
+
+.reminder-content h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.reminder-appointments {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reminder-appointment-item {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 12px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.reminder-appointment-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+.reminder-appointment-info strong {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.reminder-time {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.reminder-countdown {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  font-style: italic;
+}
+
+.reminder-view-btn {
+  background: white;
+  color: #e67e22;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.reminder-view-btn:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.reminder-close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.reminder-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
 .welcome-section {
   text-align: center;
   margin-bottom: 40px;
@@ -292,5 +433,26 @@
   
   .footer-content {
     padding: 0 15px;
+  }
+  
+  .appointment-reminder-banner {
+    flex-direction: column;
+    padding: 15px;
+  }
+  
+  .reminder-appointment-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .reminder-view-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .reminder-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
   }
 }

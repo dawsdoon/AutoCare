@@ -1,13 +1,92 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { useAuth } from '../contexts/AuthContext'
+import { AppointmentService } from '../services/supabase'
 import Navbar from '../components/Navbar'
 import './Dashboard.css'
 
 const Dashboard = () => {
   const [selectedServices, setSelectedServices] = useState([])
   const [notes, setNotes] = useState('')
+  const [upcomingAppointments, setUpcomingAppointments] = useState([])
+  const [loadingReminders, setLoadingReminders] = useState(true)
   const navigate = useNavigate()
+  const { user } = useAuth()
+
+  useEffect(() => {
+    if (user) {
+      fetchUpcomingAppointments()
+    }
+  }, [user])
+
+  const fetchUpcomingAppointments = async () => {
+    if (!user) return
+    
+    try {
+      setLoadingReminders(true)
+      const result = await AppointmentService.getUserAppointments(user.id)
+      if (result.success) {
+        const appointments = result.data || []
+        const now = new Date()
+        const in48Hours = new Date(now.getTime() + 48 * 60 * 60 * 1000)
+        
+        // Filter appointments that are pending/in-progress and within 48 hours
+        const upcoming = appointments.filter(apt => {
+          if (apt.status === 'completed' || apt.status === 'cancelled') return false
+          
+          const appointmentDateTime = new Date(`${apt.appointment_date}T${apt.appointment_time}`)
+          return appointmentDateTime >= now && appointmentDateTime <= in48Hours
+        })
+        
+        // Sort by date/time
+        upcoming.sort((a, b) => {
+          const dateA = new Date(`${a.appointment_date}T${a.appointment_time}`)
+          const dateB = new Date(`${b.appointment_date}T${b.appointment_time}`)
+          return dateA - dateB
+        })
+        
+        setUpcomingAppointments(upcoming)
+      }
+    } catch (error) {
+      console.error('Error fetching upcoming appointments:', error)
+    } finally {
+      setLoadingReminders(false)
+    }
+  }
+
+  const formatAppointmentDateTime = (date, time) => {
+    const appointmentDate = new Date(`${date}T${time}`)
+    const now = new Date()
+    const hoursUntil = Math.floor((appointmentDate - now) / (1000 * 60 * 60))
+    
+    if (hoursUntil < 1) {
+      const minutesUntil = Math.floor((appointmentDate - now) / (1000 * 60))
+      return `in ${minutesUntil} minute${minutesUntil !== 1 ? 's' : ''}`
+    } else if (hoursUntil < 24) {
+      return `in ${hoursUntil} hour${hoursUntil !== 1 ? 's' : ''}`
+    } else {
+      const daysUntil = Math.floor(hoursUntil / 24)
+      return `in ${daysUntil} day${daysUntil !== 1 ? 's' : ''}`
+    }
+  }
+
+  const formatTime = (timeString) => {
+    const [hours, minutes] = timeString.split(':')
+    const hour = parseInt(hours)
+    const ampm = hour >= 12 ? 'PM' : 'AM'
+    const displayHour = hour % 12 || 12
+    return `${displayHour}:${minutes} ${ampm}`
+  }
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric'
+    })
+  }
 
   const serviceData = {
     'oil-change': { title: 'Oil Change', info: 'Regular engine oil replacement and filter change', duration: '30-45 min' },
@@ -61,6 +140,46 @@ const Dashboard = () => {
       
       <main className="main-content">
         <div className="container">
+          {/* Upcoming Appointment Reminder */}
+          {!loadingReminders && upcomingAppointments.length > 0 && (
+            <div className="appointment-reminder-banner">
+              <div className="reminder-icon">
+                <i className="fas fa-bell"></i>
+              </div>
+              <div className="reminder-content">
+                <h3>Upcoming Appointment{upcomingAppointments.length > 1 ? 's' : ''}</h3>
+                <div className="reminder-appointments">
+                  {upcomingAppointments.map((apt, index) => (
+                    <div key={apt.id || index} className="reminder-appointment-item">
+                      <div className="reminder-appointment-info">
+                        <strong>{apt.service_name}</strong>
+                        <span className="reminder-time">
+                          {formatDate(apt.appointment_date)} at {formatTime(apt.appointment_time)}
+                        </span>
+                        <span className="reminder-countdown">
+                          {formatAppointmentDateTime(apt.appointment_date, apt.appointment_time)}
+                        </span>
+                      </div>
+                      <button 
+                        className="reminder-view-btn"
+                        onClick={() => navigate('/service-history')}
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button 
+                className="reminder-close-btn"
+                onClick={() => setUpcomingAppointments([])}
+                title="Dismiss reminder"
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+          )}
+
           <div className="welcome-section">
             <h2>Choose Your Service</h2>
             <p>Select the type of appointment you need for your vehicle</p>
