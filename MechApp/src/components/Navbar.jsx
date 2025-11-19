@@ -74,6 +74,10 @@ const Navbar = () => {
             <i className="fas fa-history"></i>
             Service History
           </a>
+          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/maintenance-schedule'); closeMenu(); }} className="dropdown-item">
+            <i className="fas fa-calendar-check"></i>
+            Maintenance Schedule
+          </a>
           <a href="#" onClick={(e) => { e.preventDefault(); navigate('/faq'); closeMenu(); }} className="dropdown-item">
             <i className="fas fa-question-circle"></i>
             FAQ

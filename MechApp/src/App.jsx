@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard'
 import Account from './pages/Account'
 import Schedule from './pages/Schedule'
 import ServiceHistory from './pages/ServiceHistory'
+import MaintenanceSchedule from './pages/MaintenanceSchedule'
 import FAQ from './pages/FAQ'
 import Contact from './pages/Contact'
 import AdminDashboard from './pages/AdminDashboard'
@@ -62,6 +63,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ServiceHistory />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/maintenance-schedule" 
+              element={
+                <ProtectedRoute>
+                  <MaintenanceSchedule />
                 </ProtectedRoute>
               } 
             />
