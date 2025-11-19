@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { AppointmentService } from '../services/supabase'
 
 const Navbar = () => {
   const { signOut, user } = useAuth()
   const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [upcomingCount, setUpcomingCount] = useState(0)
 
   const handleLogout = async () => {
     try {
@@ -23,6 +25,41 @@ const Navbar = () => {
 
   const closeMenu = () => {
     setIsMenuOpen(false)
+  }
+
+  // Fetch upcoming appointments for notification badge
+  useEffect(() => {
+    if (user) {
+      fetchUpcomingCount()
+      // Refresh every 5 minutes
+      const interval = setInterval(fetchUpcomingCount, 5 * 60 * 1000)
+      return () => clearInterval(interval)
+    }
+  }, [user])
+
+  const fetchUpcomingCount = async () => {
+    if (!user) return
+    
+    try {
+      const result = await AppointmentService.getUserAppointments(user.id)
+      if (result.success) {
+        const appointments = result.data || []
+        const now = new Date()
+        const in48Hours = new Date(now.getTime() + 48 * 60 * 60 * 1000)
+        
+        // Count appointments that are pending/in-progress and within 48 hours
+        const upcoming = appointments.filter(apt => {
+          if (apt.status === 'completed' || apt.status === 'cancelled') return false
+          
+          const appointmentDateTime = new Date(`${apt.appointment_date}T${apt.appointment_time}`)
+          return appointmentDateTime >= now && appointmentDateTime <= in48Hours
+        })
+        
+        setUpcomingCount(upcoming.length)
+      }
+    } catch (error) {
+      console.error('Error fetching upcoming appointments:', error)
+    }
   }
 
   // Close menu when clicking outside
@@ -60,6 +97,9 @@ const Navbar = () => {
       <div className="nav-actions">
         <button className="menu-toggle" onClick={toggleMenu}>
           <i className="fas fa-bars"></i>
+          {upcomingCount > 0 && (
+            <span className="notification-badge">{upcomingCount}</span>
+          )}
         </button>
         <div className={`dropdown-menu ${isMenuOpen ? 'show' : ''}`}>
           <a href="#" onClick={(e) => { e.preventDefault(); navigate('/account'); closeMenu(); }} className="dropdown-item">
