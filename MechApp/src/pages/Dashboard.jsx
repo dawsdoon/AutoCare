@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { AppointmentService } from '../services/supabase'
 import Navbar from '../components/Navbar'
 import './Dashboard.css'
+import CostCalculator from '../components/CostCalculator'
 
 const Dashboard = () => {
   const [selectedServices, setSelectedServices] = useState([])
@@ -89,12 +90,12 @@ const Dashboard = () => {
   }
 
   const serviceData = {
-    'oil-change': { title: 'Oil Change', info: 'Regular engine oil replacement and filter change', duration: '30-45 min' },
-    'brake-inspection': { title: 'Brake Inspection', info: 'Complete brake system check and pad replacement', duration: '1-2 hours' },
-    'tire-rotation': { title: 'Tire Rotation', info: 'Rotate tires for even wear and extend tire life', duration: '20-30 min' },
-    'flat-tire-repair': { title: 'Flat Tire Repair', info: 'Professional tire patching and repair services', duration: '30-45 min' },
-    'wheel-alignment': { title: 'Wheel Alignment', info: 'Precise wheel alignment for optimal handling and tire wear', duration: '45-60 min' },
-    'seasonal-tire-change': { title: 'Seasonal Tire Change', info: 'Switch between summer and winter tires seasonally', duration: '30-45 min' }
+    'oil-change': { title: 'Oil Change', info: 'Regular engine oil replacement and filter change', duration: '30-45 min', price: 29.99 },
+    'brake-inspection': { title: 'Brake Inspection', info: 'Complete brake system check and pad replacement', duration: '1-2 hours', price: 49.99 },
+    'tire-rotation': { title: 'Tire Rotation', info: 'Rotate tires for even wear and extend tire life', duration: '20-30 min', price: 39.99 },
+    'flat-tire-repair': { title: 'Flat Tire Repair', info: 'Professional tire patching and repair services', duration: '30-45 min', price: 79.99 },
+    'wheel-alignment': { title: 'Wheel Alignment', info: 'Precise wheel alignment for optimal handling and tire wear', duration: '45-60 min', price: 19.99 },
+    'seasonal-tire-change': { title: 'Seasonal Tire Change', info: 'Switch between summer and winter tires seasonally', duration: '30-45 min', price: 99.99 }
   }
 
   const handleServiceToggle = (serviceType) => {
@@ -106,7 +107,8 @@ const Dashboard = () => {
           type: serviceType,
           title: serviceData[serviceType].title,
           info: serviceData[serviceType].info,
-          duration: serviceData[serviceType].duration
+          duration: serviceData[serviceType].duration,
+          price: serviceData[serviceType].price
         }
         return [...prev, service]
       }
@@ -210,6 +212,7 @@ const Dashboard = () => {
                 </div>
                 <h3>{service.title}</h3>
                 <p className="service-desc">{service.info}</p>
+                <p className="service-price">${service.price.toFixed(2)}</p>
                 <div className="service-details">
                   <span className="duration">{service.duration}</span>
                 </div>
@@ -230,6 +233,10 @@ const Dashboard = () => {
                       </div>
                     ))}
                   </div>
+                  
+                  {/* CostCalculator shows total cost of all selected services */}
+                  <CostCalculator services={selectedServices} />
+                  
                   <div className="notes-section">
                     <label htmlFor="serviceNotes" className="notes-label">Additional Notes (Optional)</label>
                     <textarea 
