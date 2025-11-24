@@ -1,0 +1,38 @@
+.cost-calculator {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(74, 222, 128, 0.1);
+    border: 2px solid rgba(74, 222, 128, 0.3);
+    border-radius: 10px;
+  }
+  
+  .cost-calculator-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .cost-label {
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
+  .cost-total {
+    color: #4ade80;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(74, 222, 128, 0.3);
+  }
+  
+  @media (max-width: 768px) {
+    .cost-calculator-content {
+      flex-direction: column;
+      gap: 10px;
+      text-align: center;
+    }
+    
+    .cost-total {
+      font-size: 1.5rem;
+    }
+  
