@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useAuth } from '../contexts/AuthContext'
-import { AppointmentService } from '../services/supabase'
+import { AppointmentService, ServicePriceService } from '../services/supabase'
 import Navbar from '../components/Navbar'
 import './Dashboard.css'
 import CostCalculator from '../components/CostCalculator'
@@ -12,6 +12,8 @@ const Dashboard = () => {
   const [notes, setNotes] = useState('')
   const [upcomingAppointments, setUpcomingAppointments] = useState([])
   const [loadingReminders, setLoadingReminders] = useState(true)
+  const [servicePrices, setServicePrices] = useState([])
+  const [pricesLoading, setPricesLoading] = useState(true)
   const navigate = useNavigate()
   const { user } = useAuth()
 
@@ -20,6 +22,30 @@ const Dashboard = () => {
       fetchUpcomingAppointments()
     }
   }, [user])
+
+  useEffect(() => {
+    // Async function: Fetches prices from database
+    const fetchPrices = async () => {
+      try {
+        setPricesLoading(true)
+        // Await: Pauses execution until Promise resolves
+        const result = await ServicePriceService.getAllPrices()
+        
+        // State update: Triggers component re-render
+        if (result.success) {
+          setServicePrices(result.data || [])
+        } else {
+          console.error('Failed to fetch prices:', result.error)
+        }
+      } catch (error) {
+        console.error('Error fetching prices:', error)
+      } finally {
+        setPricesLoading(false)
+      }
+    }
+    
+    fetchPrices()
+  }, [])
 
   const fetchUpcomingAppointments = async () => {
     if (!user) return
@@ -98,6 +124,26 @@ const Dashboard = () => {
     'seasonal-tire-change': { title: 'Seasonal Tire Change', info: 'Switch between summer and winter tires seasonally', duration: '30-45 min', price: 99.99 }
   }
 
+  // Array.reduce() method: Transforms array into object
+  const getServiceDataWithPrices = () => {
+    // Spread operator: Creates shallow copy of serviceData object
+    const data = { ...serviceData }
+    
+    // Array.forEach() method: Iterates through each price from database
+    servicePrices.forEach(priceData => {
+      // Optional chaining: Safely accesses nested property
+      if (data[priceData.service_type]) {
+        // parseFloat(): Converts string to number
+        data[priceData.service_type].price = parseFloat(priceData.base_price)
+      }
+    })
+    
+    return data
+  }
+
+  // Use merged data instead of hardcoded serviceData
+  const currentServiceData = getServiceDataWithPrices()
+
   const handleServiceToggle = (serviceType) => {
     setSelectedServices(prev => {
       if (prev.some(service => service.type === serviceType)) {
@@ -105,10 +151,10 @@ const Dashboard = () => {
       } else {
         const service = {
           type: serviceType,
-          title: serviceData[serviceType].title,
-          info: serviceData[serviceType].info,
-          duration: serviceData[serviceType].duration,
-          price: serviceData[serviceType].price
+          title: currentServiceData[serviceType].title,
+          info: currentServiceData[serviceType].info,
+          duration: currentServiceData[serviceType].duration,
+          price: currentServiceData[serviceType].price
         }
         return [...prev, service]
       }
@@ -188,7 +234,7 @@ const Dashboard = () => {
           </div>
           
           <div className="services-grid">
-            {Object.entries(serviceData).map(([serviceType, service]) => (
+            {Object.entries(currentServiceData).map(([serviceType, service]) => (
               <div key={serviceType} className="service-card" data-service={serviceType}>
                 <div className="service-checkbox">
                   <input 

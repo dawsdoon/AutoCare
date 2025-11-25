@@ -353,3 +353,47 @@ export class AppointmentService {
     }
 
 }
+
+// Service price functions
+export class ServicePriceService {
+  // Async function: Returns Promise, allows await keyword
+  // Static method: Can be called without creating an instance
+  static async getAllPrices() {
+    try {
+      // Await: Pauses execution until Promise resolves
+      // Supabase query: Selects all columns from service_prices table
+      const { data, error } = await supabaseClient
+        .from('service_prices')
+        .select('*')
+        .order('service_type', { ascending: true });
+
+      // Error handling: If error exists, throw it
+      if (error) throw error;
+
+      // Return success response with data
+      return { success: true, data: data || [] };
+    } catch (error) {
+      // Catch block: Handles any errors that occur
+      console.error('Get all prices error:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Get price for a specific service type
+  static async getPriceByType(serviceType) {
+    try {
+      // Query with WHERE clause: Filters by service_type
+      const { data, error } = await supabaseClient
+        .from('service_prices')
+        .select('*')
+        .eq('service_type', serviceType)
+        .single(); // .single() expects exactly one row
+
+      if (error) throw error;
+      return { success: true, data };
+    } catch (error) {
+      console.error('Get price by type error:', error);
+      return { success: false, error: error.message };
+    }
+  }
+}
