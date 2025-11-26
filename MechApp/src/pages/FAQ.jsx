@@ -1,8 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import './FAQ.css'
 
 const FAQ = () => {
+  const { user } = useAuth()
   const faqs = [
     {
       question: "How do I add my vehicle to the system?",
@@ -84,9 +86,9 @@ const FAQ = () => {
             Contact Us
           </Link>
         </div>
-        <Link to="/dashboard" className="back-to-dashboard">
+        <Link to={user ? "/dashboard" : "/"} className="back-to-dashboard">
           <i className="fas fa-arrow-left"></i>
-          Back to Dashboard
+          {user ? "Back to Dashboard" : "Back to Home"}
         </Link>
       </div>
     </div>

@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { useAuth } from '../contexts/AuthContext'
 import Navbar from '../components/Navbar'
 import './Contact.css'
 
 const Contact = () => {
-const [formData, setFormData] = useState({
+  const { user } = useAuth()
+  const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
@@ -93,9 +95,9 @@ return (
                     <i className="fas fa-question-circle"></i>
                     View FAQ
                 </Link>
-                <Link to="/dashboard" className="support-link">
+                <Link to={user ? "/dashboard" : "/login"} className="support-link">
                     <i className="fas fa-calendar"></i>
-                    Schedule Service
+                    {user ? "Schedule Service" : "Login to Schedule"}
                 </Link>
                 </div>
             </div>

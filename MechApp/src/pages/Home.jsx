@@ -39,7 +39,7 @@ const Home = () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [isMenuOpen])
-  
+
   return (
     <div className="home-page">
       <nav className="home-navbar">
