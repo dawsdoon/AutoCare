@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ToastContainer } from 'react-toastify'
 import { AuthProvider } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import Home from './pages/Home'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Account from './pages/Account'
@@ -33,7 +34,10 @@ function App() {
             theme="light"
           />
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<Home />} />
+            
+            <Route path="/login" element={<Login />} />
+            
             <Route 
               path="/dashboard" 
               element={
@@ -74,22 +78,9 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-            <Route 
-              path="/faq" 
-              element={
-                <ProtectedRoute>
-                  <FAQ />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/contact" 
-              element={
-                <ProtectedRoute>
-                  <Contact />
-                </ProtectedRoute>
-              } 
-            />
+            <Route path="/faq" element={<FAQ />} />
+            
+            <Route path="/contact" element={<Contact />} />
             <Route 
               path="/admin" 
               element={
