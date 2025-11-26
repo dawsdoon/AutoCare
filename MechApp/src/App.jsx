@@ -34,13 +34,8 @@ function App() {
             theme="light"
           />
           <Routes>
-            {/* LEARNING: Home page route - this is the landing page users see first */}
-            {/* LEARNING: The "/" path means this is the default/root route */}
-            {/* LEARNING: When users visit the website, they'll see the Home component */}
             <Route path="/" element={<Home />} />
             
-            {/* LEARNING: Login page route - users navigate here when they click "Get Started" */}
-            {/* LEARNING: The "/login" path is what the Home page navigates to */}
             <Route path="/login" element={<Login />} />
             
             <Route 
@@ -83,10 +78,8 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-            {/* LEARNING: FAQ route - accessible without login for landing page visitors */}
             <Route path="/faq" element={<FAQ />} />
             
-            {/* LEARNING: Contact route - accessible without login for landing page visitors */}
             <Route path="/contact" element={<Contact />} />
             <Route 
               path="/admin" 

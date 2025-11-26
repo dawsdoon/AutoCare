@@ -1,1025 +1,558 @@
-/* ============================================
-   LEARNING NOTES (for study purposes)
-   ============================================
-   - Comments starting with "LEARNING:" are educational
-   - Actual CSS code appears on lines without "LEARNING:" prefix
-   - Study the LEARNING comments to understand CSS concepts
-   ============================================ */
+
 
 /* ===== MAIN CONTAINER ===== */
-/* LEARNING: Style the main home-page container */
-/* LEARNING: This is the root element that wraps all content on the landing page */
 .home-page {
-  /* LEARNING: width: 100% - Makes the container take up 100% of its parent's width */
-  /* LEARNING: This ensures the page spans the full width of the browser window */
   width: 100%;
   
-  /* LEARNING: min-height: 100vh - Sets minimum height to 100% of viewport height */
-  /* LEARNING: vh = viewport height (the visible area of the browser) */
-  /* LEARNING: This ensures the page is at least as tall as the screen, even with little content */
   min-height: 100vh;
 }
 
 /* ===== NAVBAR ===== */
-/* LEARNING: Style the home page navbar */
-/* LEARNING: This is the navigation bar at the top of the landing page */
 .home-navbar {
-  /* LEARNING: background: white - Sets navbar background to white */
-  /* LEARNING: White background makes navbar stand out from hero section */
   background: white;
   
-  /* LEARNING: padding: 15px 20px - Adds space inside navbar */
-  /* LEARNING: 15px top/bottom, 20px left/right */
   padding: 15px 20px;
   
-  /* LEARNING: display: flex - Enables flexbox layout */
-  /* LEARNING: Allows us to arrange logo and menu horizontally */
   display: flex;
   
-  /* LEARNING: justify-content: space-between - Pushes logo to left, menu to right */
-  /* LEARNING: Creates space between logo and menu button */
   justify-content: space-between;
   
-  /* LEARNING: align-items: center - Centers items vertically */
-  /* LEARNING: Aligns logo and menu button on same baseline */
   align-items: center;
   
-  /* LEARNING: box-shadow: Creates shadow effect */
-  /* LEARNING: Makes navbar appear elevated above content */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   
-  /* LEARNING: position: sticky - Makes navbar stick to top when scrolling */
-  /* LEARNING: top: 0 means it sticks at the top of the viewport */
   position: sticky;
   top: 0;
   
-  /* LEARNING: z-index: 1000 - Ensures navbar appears above other content */
-  /* LEARNING: Higher z-index means it's on top */
   z-index: 1000;
 }
 
-/* LEARNING: Style the navbar logo/title */
 .home-nav-logo {
-  /* LEARNING: display: flex - Enables flexbox */
-  /* LEARNING: Allows us to align icon and text horizontally */
   display: flex;
   
-  /* LEARNING: align-items: center - Centers items vertically */
   align-items: center;
   
-  /* LEARNING: gap: 10px - Adds space between icon and text */
   gap: 10px;
   
-  /* LEARNING: color: #2c3e50 - Sets text color to dark blue-gray */
   color: #2c3e50;
 }
 
-/* LEARNING: Style the car icon in navbar */
 .home-nav-logo i {
-  /* LEARNING: font-size: 1.8rem - Sets icon size */
   font-size: 1.8rem;
   
-  /* LEARNING: color: #4a9eff - Sets icon color to blue */
   color: #4a9eff;
 }
 
-/* LEARNING: Style the navbar title (h1) */
 .home-nav-logo h1 {
-  /* LEARNING: font-size: 1.5rem - Sets text size */
   font-size: 1.5rem;
   
-  /* LEARNING: font-weight: 700 - Makes text bold */
   font-weight: 700;
   
-  /* LEARNING: margin: 0 - Removes default margin */
   margin: 0;
   
-  /* LEARNING: color: #2c3e50 - Sets text color */
   color: #2c3e50;
 }
 
-/* LEARNING: Style the navigation actions container */
 .home-nav-actions {
-  /* LEARNING: position: relative - Allows absolute positioning of dropdown */
-  /* LEARNING: Dropdown menu will be positioned relative to this container */
   position: relative;
 }
 
-/* LEARNING: Style the menu toggle button */
 .home-menu-toggle {
-  /* LEARNING: background: transparent - No background color */
   background: transparent;
   
-  /* LEARNING: border: none - Removes default button border */
   border: none;
   
-  /* LEARNING: color: #2c3e50 - Sets icon color */
   color: #2c3e50;
   
-  /* LEARNING: font-size: 1.5rem - Sets icon size */
   font-size: 1.5rem;
   
-  /* LEARNING: padding: 8px - Adds space inside button */
   padding: 8px;
   
-  /* LEARNING: cursor: pointer - Changes cursor to hand pointer */
   cursor: pointer;
   
-  /* LEARNING: border-radius: 6px - Rounds corners slightly */
   border-radius: 6px;
   
-  /* LEARNING: transition: all 0.3s ease - Animates property changes */
   transition: all 0.3s ease;
 }
 
-/* LEARNING: Add hover effect to menu toggle */
 .home-menu-toggle:hover {
-  /* LEARNING: background: rgba(74, 158, 255, 0.1) - Adds light blue background on hover */
   background: rgba(74, 158, 255, 0.1);
   
-  /* LEARNING: color: #4a9eff - Changes icon color to blue on hover */
   color: #4a9eff;
 }
 
-/* LEARNING: Style the dropdown menu */
 .home-dropdown-menu {
-  /* LEARNING: position: absolute - Positions menu relative to parent */
-  /* LEARNING: right: 0 means it aligns to the right edge */
   position: absolute;
   right: 0;
   top: calc(100% + 10px);
   
-  /* LEARNING: background: white - Sets menu background to white */
   background: white;
   
-  /* LEARNING: min-width: 200px - Sets minimum width */
   min-width: 200px;
   
-  /* LEARNING: box-shadow: Creates shadow effect */
-  /* LEARNING: Makes menu appear elevated */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   
-  /* LEARNING: border-radius: 8px - Rounds corners */
   border-radius: 8px;
   
-  /* LEARNING: padding: 10px 0 - Adds vertical padding */
   padding: 10px 0;
   
-  /* LEARNING: opacity: 0 - Makes menu invisible by default */
   opacity: 0;
   
-  /* LEARNING: visibility: hidden - Hides menu from screen readers */
   visibility: hidden;
   
-  /* LEARNING: transform: translateY(-10px) - Moves menu up slightly */
-  /* LEARNING: Creates slide-down animation effect */
   transform: translateY(-10px);
   
-  /* LEARNING: transition: all 0.3s ease - Animates property changes */
   transition: all 0.3s ease;
 }
 
-/* LEARNING: Show dropdown menu when isMenuOpen is true */
 .home-dropdown-menu.show {
-  /* LEARNING: opacity: 1 - Makes menu fully visible */
   opacity: 1;
   
-  /* LEARNING: visibility: visible - Shows menu to screen readers */
   visibility: visible;
   
-  /* LEARNING: transform: translateY(0) - Moves menu to normal position */
   transform: translateY(0);
 }
 
-/* LEARNING: Style individual dropdown menu items */
 .home-dropdown-item {
-  /* LEARNING: display: flex - Enables flexbox */
-  /* LEARNING: Allows us to align icon and text horizontally */
   display: flex;
   
-  /* LEARNING: align-items: center - Centers items vertically */
   align-items: center;
   
-  /* LEARNING: gap: 12px - Adds space between icon and text */
   gap: 12px;
   
-  /* LEARNING: padding: 12px 20px - Adds space inside each item */
   padding: 12px 20px;
   
-  /* LEARNING: color: #2c3e50 - Sets text color */
   color: #2c3e50;
   
-  /* LEARNING: text-decoration: none - Removes underline */
   text-decoration: none;
   
-  /* LEARNING: font-size: 1rem - Sets text size */
   font-size: 1rem;
   
-  /* LEARNING: transition: all 0.2s ease - Animates property changes */
   transition: all 0.2s ease;
 }
 
-/* LEARNING: Add hover effect to dropdown items */
 .home-dropdown-item:hover {
-  /* LEARNING: background: #f8f9fa - Adds light gray background on hover */
   background: #f8f9fa;
   
-  /* LEARNING: color: #4a9eff - Changes text color to blue on hover */
   color: #4a9eff;
 }
 
-/* LEARNING: Style icons in dropdown items */
 .home-dropdown-item i {
-  /* LEARNING: width: 20px - Sets icon width for alignment */
   width: 20px;
   
-  /* LEARNING: text-align: center - Centers icon */
   text-align: center;
 }
 
 /* ===== HERO SECTION ===== */
-/* LEARNING: Style the hero section - the big banner at the top of the page */
-/* LEARNING: This is the first thing visitors see and should be eye-catching */
 .hero-section {
-  /* LEARNING: background: linear-gradient() - Creates a gradient background */
-  /* LEARNING: linear-gradient creates a smooth color transition */
-  /* LEARNING: 135deg = angle of the gradient (diagonal from top-left to bottom-right) */
-  /* LEARNING: #667eea = starting color (purple-blue) at 0% */
-  /* LEARNING: #764ba2 = ending color (purple) at 100% */
-  /* LEARNING: This matches the gradient used in index.css for consistency */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   
-  /* LEARNING: padding: 120px 20px 80px - Adds space inside the element */
-  /* LEARNING: Format: top right bottom left (when 4 values) */
-  /* LEARNING: 120px top, 20px left/right, 80px bottom */
-  /* LEARNING: Generous padding makes the hero section feel spacious */
   padding: 120px 20px 80px;
   
-  /* LEARNING: text-align: center - Centers text horizontally */
-  /* LEARNING: All text content inside will be centered */
   text-align: center;
   
-  /* LEARNING: min-height: 500px - Sets minimum height to 500 pixels */
-  /* LEARNING: Ensures the hero section is prominent and not too small */
   min-height: 500px;
   
-  /* LEARNING: display: flex - Enables Flexbox layout */
-  /* LEARNING: Flexbox is a CSS layout system that makes it easy to align and distribute space */
   display: flex;
   
-  /* LEARNING: align-items: center - Centers items vertically in a flex container */
-  /* LEARNING: This centers the hero content vertically within the section */
   align-items: center;
   
-  /* LEARNING: justify-content: center - Centers items horizontally in a flex container */
-  /* LEARNING: This centers the hero content horizontally */
   justify-content: center;
 }
 
-/* LEARNING: Style the hero content container */
-/* LEARNING: This div wraps the actual content (headline, subtitle, button) */
 .hero-content {
-  /* LEARNING: max-width: 800px - Limits the maximum width to 800 pixels */
-  /* LEARNING: Prevents text from being too wide on large screens (hard to read) */
-  /* LEARNING: On smaller screens, it will shrink to fit */
   max-width: 800px;
   
-  /* LEARNING: margin: 0 auto - Centers the container horizontally */
-  /* LEARNING: 0 = no top/bottom margin */
-  /* LEARNING: auto = equal left/right margins (centers the element) */
   margin: 0 auto;
 }
 
-/* LEARNING: Style the main hero title (h1) */
-/* LEARNING: This is the largest, most prominent text on the page */
 .hero-title {
-  /* LEARNING: font-size: 3.5rem - Sets text size to 3.5 times the root font size */
-  /* LEARNING: rem = relative to root element's font size (usually 16px, so 3.5rem = 56px) */
-  /* LEARNING: Large size makes it eye-catching and important */
   font-size: 3.5rem;
   
-  /* LEARNING: font-weight: 700 - Makes text bold */
-  /* LEARNING: 700 is equivalent to "bold" (400 is normal, 900 is extra bold) */
   font-weight: 700;
   
-  /* LEARNING: color: #ffffff - Sets text color to white */
-  /* LEARNING: White text contrasts well with the purple gradient background */
   color: #ffffff;
   
-  /* LEARNING: margin-bottom: 20px - Adds 20 pixels of space below the title */
-  /* LEARNING: Creates visual separation between the title and subtitle */
   margin-bottom: 20px;
   
-  /* LEARNING: line-height: 1.2 - Sets spacing between lines of text */
-  /* LEARNING: 1.2 means 120% of font size - makes text more readable */
-  /* LEARNING: Prevents lines from being too close together */
   line-height: 1.2;
 }
 
-/* LEARNING: Create a highlight class for part of the title */
-/* LEARNING: This styles the <span> element inside the h1 to make it stand out */
 .highlight {
-  /* LEARNING: color: #4a9eff - Sets text color to blue */
-  /* LEARNING: This is the theme color used throughout the app */
-  /* LEARNING: Makes the highlighted text stand out from the white title */
   color: #4a9eff;
 }
 
-/* LEARNING: Style the hero subtitle/description */
-/* LEARNING: This is the paragraph text below the main headline */
 .hero-subtitle {
-  /* LEARNING: font-size: 1.3rem - Sets text size to 1.3 times root font size */
-  /* LEARNING: Smaller than the title but still readable */
   font-size: 1.3rem;
   
-  /* LEARNING: color: rgba(255, 255, 255, 0.9) - Sets text color to white with 90% opacity */
-  /* LEARNING: rgba = Red, Green, Blue, Alpha (transparency) */
-  /* LEARNING: 255, 255, 255 = white color */
-  /* LEARNING: 0.9 = 90% opacity (slightly transparent, softer than pure white) */
   color: rgba(255, 255, 255, 0.9);
   
-  /* LEARNING: margin-bottom: 40px - Adds 40 pixels of space below the subtitle */
-  /* LEARNING: Creates space before the button */
   margin-bottom: 40px;
   
-  /* LEARNING: line-height: 1.6 - Sets spacing between lines */
-  /* LEARNING: 1.6 = 160% of font size - comfortable reading spacing for paragraphs */
   line-height: 1.6;
 }
 
-/* LEARNING: Style the call-to-action button */
-/* LEARNING: This is the "Get Started" button in the hero section */
 .cta-button {
-  /* LEARNING: background: #4a9eff - Sets button background to blue */
-  /* LEARNING: This is the primary theme color */
   background: #4a9eff;
   
-  /* LEARNING: color: white - Sets text color to white */
-  /* LEARNING: White text on blue background has good contrast */
   color: white;
   
-  /* LEARNING: border: none - Removes the default button border */
-  /* LEARNING: Gives a cleaner, modern look */
   border: none;
   
-  /* LEARNING: padding: 18px 40px - Adds space inside the button */
-  /* LEARNING: 18px top/bottom, 40px left/right */
-  /* LEARNING: Makes the button large and clickable */
   padding: 18px 40px;
   
-  /* LEARNING: font-size: 1.2rem - Sets text size */
-  /* LEARNING: Makes button text readable and prominent */
   font-size: 1.2rem;
   
-  /* LEARNING: font-weight: 600 - Makes text semi-bold */
-  /* LEARNING: Makes the button text stand out */
   font-weight: 600;
   
-  /* LEARNING: border-radius: 50px - Rounds the corners */
-  /* LEARNING: 50px creates a "pill" shape (fully rounded) */
-  /* LEARNING: Makes the button look modern and friendly */
   border-radius: 50px;
   
-  /* LEARNING: cursor: pointer - Changes cursor to hand pointer on hover */
-  /* LEARNING: Indicates the element is clickable */
   cursor: pointer;
   
-  /* LEARNING: display: inline-flex - Makes button a flex container */
-  /* LEARNING: inline-flex = behaves like inline element but uses flexbox inside */
-  /* LEARNING: Allows us to align icon and text horizontally */
   display: inline-flex;
   
-  /* LEARNING: align-items: center - Centers items vertically in flex container */
-  /* LEARNING: Aligns icon and text on the same baseline */
   align-items: center;
   
-  /* LEARNING: gap: 10px - Adds 10 pixels of space between flex items */
-  /* LEARNING: Creates space between button text and icon */
   gap: 10px;
   
-  /* LEARNING: transition: all 0.3s ease - Animates property changes */
-  /* LEARNING: all = animate all properties that change */
-  /* LEARNING: 0.3s = animation duration (0.3 seconds) */
-  /* LEARNING: ease = easing function (starts slow, speeds up, slows down) */
-  /* LEARNING: Makes hover effects smooth instead of instant */
   transition: all 0.3s ease;
 }
 
-/* LEARNING: Add hover effect for the button */
-/* LEARNING: :hover is a pseudo-class that applies styles when mouse hovers over element */
 .cta-button:hover {
-  /* LEARNING: transform: translateY(-3px) - Moves element up 3 pixels */
-  /* LEARNING: translateY = vertical movement (negative = up) */
-  /* LEARNING: Creates a "lift" effect when hovering */
   transform: translateY(-3px);
   
-  /* LEARNING: box-shadow: Creates a shadow effect */
-  /* LEARNING: 0 10px 25px = horizontal offset, vertical offset, blur radius */
-  /* LEARNING: rgba(74, 158, 255, 0.4) = blue shadow with 40% opacity */
-  /* LEARNING: Creates depth and makes button appear to float */
   box-shadow: 0 10px 25px rgba(74, 158, 255, 0.4);
   
-  /* LEARNING: background: #357abd - Changes background to darker blue on hover */
-  /* LEARNING: Provides visual feedback that button is interactive */
   background: #357abd;
 }
 
 /* ===== SERVICES PREVIEW SECTION ===== */
-/* LEARNING: Style the services preview section */
-/* LEARNING: This section shows what services AutoCare offers */
 .services-preview {
-  /* LEARNING: background: #ffffff - Sets background to white */
-  /* LEARNING: White background contrasts with the purple hero section */
   background: #ffffff;
   
-  /* LEARNING: padding: 80px 20px - Adds space inside the section */
-  /* LEARNING: 80px top/bottom, 20px left/right */
-  /* LEARNING: Generous padding makes the section feel spacious */
   padding: 80px 20px;
 }
 
-/* LEARNING: Create a container class for centering content */
-/* LEARNING: This class is reusable across multiple sections */
 .container {
-  /* LEARNING: max-width: 1200px - Limits maximum width to 1200 pixels */
-  /* LEARNING: Prevents content from being too wide on large monitors */
-  /* LEARNING: Improves readability by keeping text at optimal width */
   max-width: 1200px;
   
-  /* LEARNING: margin: 0 auto - Centers the container horizontally */
-  /* LEARNING: 0 = no top/bottom margin */
-  /* LEARNING: auto = equal left/right margins (centers horizontally) */
   margin: 0 auto;
 }
 
-/* LEARNING: Style section titles (h2) */
-/* LEARNING: These are the main headings for each section */
 .section-title {
-  /* LEARNING: font-size: 2.5rem - Sets text size to 2.5 times root font size */
-  /* LEARNING: Large enough to be prominent but smaller than hero title */
   font-size: 2.5rem;
   
-  /* LEARNING: font-weight: 700 - Makes text bold */
-  /* LEARNING: Makes section titles stand out */
   font-weight: 700;
   
-  /* LEARNING: color: #2c3e50 - Sets text color to dark blue-gray */
-  /* LEARNING: Dark color provides good contrast on white background */
   color: #2c3e50;
   
-  /* LEARNING: text-align: center - Centers text horizontally */
-  /* LEARNING: Centers the section title */
   text-align: center;
   
-  /* LEARNING: margin-bottom: 15px - Adds 15 pixels of space below */
-  /* LEARNING: Creates space between title and subtitle */
   margin-bottom: 15px;
 }
 
-/* LEARNING: Style section subtitles */
-/* LEARNING: These are descriptive paragraphs below section titles */
 .section-subtitle {
-  /* LEARNING: font-size: 1.1rem - Sets text size */
-  /* LEARNING: Smaller than title but still readable */
   font-size: 1.1rem;
   
-  /* LEARNING: color: #7f8c8d - Sets text color to gray */
-  /* LEARNING: Gray color is less prominent than black, creates hierarchy */
   color: #7f8c8d;
   
-  /* LEARNING: text-align: center - Centers text horizontally */
   text-align: center;
   
-  /* LEARNING: margin-bottom: 50px - Adds 50 pixels of space below */
-  /* LEARNING: Creates space between subtitle and content below */
   margin-bottom: 50px;
 }
 
-/* LEARNING: Create a grid layout for service cards */
-/* LEARNING: CSS Grid is a 2D layout system that makes it easy to create responsive grids */
 .services-grid {
-  /* LEARNING: display: grid - Enables CSS Grid layout */
-  /* LEARNING: Grid allows us to create rows and columns */
   display: grid;
   
-  /* LEARNING: grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) */
-  /* LEARNING: This creates a responsive grid that automatically adjusts */
-  /* LEARNING: repeat() = repeats a pattern */
-  /* LEARNING: auto-fit = creates as many columns as can fit */
-  /* LEARNING: minmax(300px, 1fr) = each column is at least 300px, but can grow to fill space */
-  /* LEARNING: 1fr = one fraction of available space */
-  /* LEARNING: Result: On large screens, multiple columns. On small screens, single column */
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   
-  /* LEARNING: gap: 30px - Adds 30 pixels of space between grid items */
-  /* LEARNING: Creates consistent spacing between service cards */
   gap: 30px;
   
-  /* LEARNING: margin-top: 40px - Adds 40 pixels of space above the grid */
-  /* LEARNING: Creates space between subtitle and grid */
   margin-top: 40px;
 }
 
-/* LEARNING: Style individual service cards */
-/* LEARNING: Each service gets its own card */
 .service-card {
-  /* LEARNING: background: #f8f9fa - Sets background to light gray */
-  /* LEARNING: Light background makes cards stand out from white section background */
   background: #f8f9fa;
   
-  /* LEARNING: padding: 40px 30px - Adds space inside the card */
-  /* LEARNING: 40px top/bottom, 30px left/right */
-  /* LEARNING: Makes cards feel spacious */
   padding: 40px 30px;
   
-  /* LEARNING: border-radius: 15px - Rounds the corners */
-  /* LEARNING: Creates modern, friendly appearance */
   border-radius: 15px;
   
-  /* LEARNING: text-align: center - Centers text horizontally */
-  /* LEARNING: Centers all content in the card */
   text-align: center;
   
-  /* LEARNING: border: 2px solid transparent - Adds invisible border */
-  /* LEARNING: transparent = invisible, but takes up space */
-  /* LEARNING: We'll make it visible on hover, prevents layout shift */
   border: 2px solid transparent;
   
-  /* LEARNING: transition: all 0.3s ease - Animates property changes */
-  /* LEARNING: Makes hover effects smooth */
   transition: all 0.3s ease;
 }
 
-/* LEARNING: Add hover effect to service cards */
-/* LEARNING: When user hovers over a card, these styles apply */
 .service-card:hover {
-  /* LEARNING: transform: translateY(-5px) - Moves card up 5 pixels */
-  /* LEARNING: Creates a "lift" effect */
   transform: translateY(-5px);
   
-  /* LEARNING: box-shadow: Creates a shadow effect */
-  /* LEARNING: Makes card appear to float above the page */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   
-  /* LEARNING: border-color: #4a9eff - Changes border to blue */
-  /* LEARNING: Makes border visible on hover, provides visual feedback */
   border-color: #4a9eff;
 }
 
-/* LEARNING: Style the service icon container */
-/* LEARNING: This is the circular container that holds the Font Awesome icon */
 .service-icon {
-  /* LEARNING: width: 80px - Sets width to 80 pixels */
   width: 80px;
   
-  /* LEARNING: height: 80px - Sets height to 80 pixels */
-  /* LEARNING: Same as width = creates a square */
   height: 80px;
   
-  /* LEARNING: background: linear-gradient() - Creates gradient background */
-  /* LEARNING: Same blue gradient as theme */
   background: linear-gradient(135deg, #4a9eff 0%, #357abd 100%);
   
-  /* LEARNING: border-radius: 50% - Makes it circular */
-  /* LEARNING: 50% = half of width/height = perfect circle */
   border-radius: 50%;
   
-  /* LEARNING: display: flex - Enables flexbox */
-  /* LEARNING: Allows us to center the icon inside */
   display: flex;
   
-  /* LEARNING: align-items: center - Centers items vertically */
-  /* LEARNING: Centers icon vertically in the circle */
   align-items: center;
   
-  /* LEARNING: justify-content: center - Centers items horizontally */
-  /* LEARNING: Centers icon horizontally in the circle */
   justify-content: center;
   
-  /* LEARNING: margin: 0 auto 20px - Centers container and adds space below */
-  /* LEARNING: 0 = no top margin */
-  /* LEARNING: auto = equal left/right margins (centers horizontally) */
-  /* LEARNING: 20px = bottom margin (space before title) */
   margin: 0 auto 20px;
   
-  /* LEARNING: font-size: 2rem - Sets icon size */
-  /* LEARNING: Makes icons large and visible */
   font-size: 2rem;
   
-  /* LEARNING: color: white - Sets icon color to white */
-  /* LEARNING: White icon on blue background has good contrast */
   color: white;
 }
 
-/* LEARNING: Style service card headings (h3) */
-/* LEARNING: These are the service names inside each card */
 .service-card h3 {
-  /* LEARNING: font-size: 1.5rem - Sets text size */
   font-size: 1.5rem;
   
-  /* LEARNING: color: #2c3e50 - Sets text color to dark blue-gray */
   color: #2c3e50;
   
-  /* LEARNING: margin-bottom: 10px - Adds 10 pixels of space below */
-  /* LEARNING: Creates space between title and description */
   margin-bottom: 10px;
 }
 
-/* LEARNING: Style service card descriptions (p) */
-/* LEARNING: These are the paragraphs describing each service */
 .service-card p {
-  /* LEARNING: color: #7f8c8d - Sets text color to gray */
   color: #7f8c8d;
   
-  /* LEARNING: line-height: 1.6 - Sets spacing between lines */
-  /* LEARNING: Makes text more readable */
   line-height: 1.6;
 }
 
 /* ===== FEATURES SECTION ===== */
-/* LEARNING: Style the features section */
-/* LEARNING: This section highlights benefits of using AutoCare */
 .features-section {
-  /* LEARNING: background: #f8f9fa - Sets background to light gray */
-  /* LEARNING: Different background color helps differentiate from services section */
   background: #f8f9fa;
   
-  /* LEARNING: padding: 80px 20px - Adds space inside the section */
   padding: 80px 20px;
 }
 
-/* LEARNING: Create a grid for feature items */
 .features-grid {
-  /* LEARNING: display: grid - Enables CSS Grid layout */
   display: grid;
   
-  /* LEARNING: grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) */
-  /* LEARNING: Similar to services grid, but smaller minimum width (250px) */
-  /* LEARNING: Features can be slightly smaller than service cards */
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   
-  /* LEARNING: gap: 40px - Adds 40 pixels of space between items */
   gap: 40px;
   
-  /* LEARNING: margin-top: 50px - Adds 50 pixels of space above */
   margin-top: 50px;
 }
 
-/* LEARNING: Style individual feature items */
 .feature-item {
-  /* LEARNING: text-align: center - Centers text horizontally */
   text-align: center;
 }
 
-/* LEARNING: Style feature icons (similar to service icons) */
 .feature-icon {
-  /* LEARNING: width: 70px - Sets width to 70 pixels */
-  /* LEARNING: Slightly smaller than service icons */
   width: 70px;
   
-  /* LEARNING: height: 70px - Sets height to 70 pixels */
   height: 70px;
   
-  /* LEARNING: background: #4a9eff - Sets background to blue */
-  /* LEARNING: Solid blue instead of gradient for variety */
   background: #4a9eff;
   
-  /* LEARNING: border-radius: 50% - Makes it circular */
   border-radius: 50%;
   
-  /* LEARNING: display: flex - Enables flexbox */
   display: flex;
   
-  /* LEARNING: align-items: center - Centers items vertically */
   align-items: center;
   
-  /* LEARNING: justify-content: center - Centers items horizontally */
   justify-content: center;
   
-  /* LEARNING: margin: 0 auto 20px - Centers and adds space below */
   margin: 0 auto 20px;
   
-  /* LEARNING: font-size: 1.8rem - Sets icon size */
   font-size: 1.8rem;
   
-  /* LEARNING: color: white - Sets icon color to white */
   color: white;
 }
 
-/* LEARNING: Style feature headings */
 .feature-item h3 {
-  /* LEARNING: font-size: 1.3rem - Sets text size */
   font-size: 1.3rem;
   
-  /* LEARNING: color: #2c3e50 - Sets text color to dark blue-gray */
   color: #2c3e50;
   
-  /* LEARNING: margin-bottom: 10px - Adds 10 pixels of space below */
   margin-bottom: 10px;
 }
 
-/* LEARNING: Style feature descriptions */
 .feature-item p {
-  /* LEARNING: color: #7f8c8d - Sets text color to gray */
   color: #7f8c8d;
   
-  /* LEARNING: line-height: 1.6 - Sets spacing between lines */
   line-height: 1.6;
 }
 
 /* ===== CALL TO ACTION SECTION ===== */
-/* LEARNING: Style the final CTA section */
-/* LEARNING: This is the last section before the footer */
 .cta-section {
-  /* LEARNING: background: linear-gradient() - Creates gradient background */
-  /* LEARNING: Same gradient as hero section for visual consistency */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   
-  /* LEARNING: padding: 80px 20px - Adds space inside the section */
   padding: 80px 20px;
   
-  /* LEARNING: text-align: center - Centers text horizontally */
   text-align: center;
 }
 
-/* LEARNING: Style the large CTA button */
-/* LEARNING: This button is in the final CTA section */
 .cta-button-large {
-  /* LEARNING: background: white - Sets background to white */
-  /* LEARNING: White button on purple background stands out */
   background: white;
   
-  /* LEARNING: color: #4a9eff - Sets text color to blue */
-  /* LEARNING: Blue text on white background */
   color: #4a9eff;
   
-  /* LEARNING: border: none - Removes default border */
   border: none;
   
-  /* LEARNING: padding: 20px 50px - Adds space inside button */
-  /* LEARNING: Larger padding than hero button for prominence */
   padding: 20px 50px;
   
-  /* LEARNING: font-size: 1.3rem - Sets text size */
   font-size: 1.3rem;
   
-  /* LEARNING: font-weight: 600 - Makes text semi-bold */
   font-weight: 600;
   
-  /* LEARNING: border-radius: 50px - Rounds corners to pill shape */
   border-radius: 50px;
   
-  /* LEARNING: cursor: pointer - Changes cursor to hand pointer */
   cursor: pointer;
   
-  /* LEARNING: display: inline-flex - Makes button a flex container */
   display: inline-flex;
   
-  /* LEARNING: align-items: center - Centers items vertically */
   align-items: center;
   
-  /* LEARNING: gap: 12px - Adds space between text and icon */
   gap: 12px;
   
-  /* LEARNING: transition: all 0.3s ease - Animates property changes */
   transition: all 0.3s ease;
 }
 
-/* LEARNING: Add hover effect for large CTA button */
 .cta-button-large:hover {
-  /* LEARNING: transform: translateY(-3px) - Moves button up 3 pixels */
   transform: translateY(-3px);
   
-  /* LEARNING: box-shadow: Creates shadow effect */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* LEARNING: Style CTA section heading */
 .cta-section h2 {
-  /* LEARNING: font-size: 2.5rem - Sets text size */
   font-size: 2.5rem;
   
-  /* LEARNING: color: white - Sets text color to white */
   color: white;
   
-  /* LEARNING: margin-bottom: 15px - Adds space below */
   margin-bottom: 15px;
 }
 
-/* LEARNING: Style CTA section paragraph */
 .cta-section p {
-  /* LEARNING: font-size: 1.2rem - Sets text size */
   font-size: 1.2rem;
   
-  /* LEARNING: color: rgba(255, 255, 255, 0.9) - Sets text to white with 90% opacity */
   color: rgba(255, 255, 255, 0.9);
   
-  /* LEARNING: margin-bottom: 40px - Adds space below */
   margin-bottom: 40px;
 }
 
 /* ===== FOOTER ===== */
-/* LEARNING: Style the footer */
 .home-footer {
-  /* LEARNING: background: #2c3e50 - Sets background to dark blue-gray */
-  /* LEARNING: Dark background for footer is a common design pattern */
   background: #2c3e50;
   
-  /* LEARNING: color: white - Sets text color to white */
-  /* LEARNING: White text on dark background has good contrast */
   color: white;
   
-  /* LEARNING: padding: 40px 20px - Adds space inside footer */
-  /* LEARNING: More padding to accommodate links and copyright */
   padding: 40px 20px;
   
-  /* LEARNING: text-align: center - Centers text horizontally */
   text-align: center;
 }
 
-/* LEARNING: Style the footer links container */
-/* LEARNING: This div wraps the FAQ and Contact links */
 .footer-links {
-  /* LEARNING: display: flex - Enables flexbox layout */
-  /* LEARNING: Allows us to arrange links horizontally */
   display: flex;
   
-  /* LEARNING: justify-content: center - Centers links horizontally */
-  /* LEARNING: Centers the links in the footer */
   justify-content: center;
   
-  /* LEARNING: gap: 30px - Adds 30 pixels of space between links */
-  /* LEARNING: Creates visual separation between FAQ and Contact links */
   gap: 30px;
   
-  /* LEARNING: margin-bottom: 20px - Adds 20 pixels of space below links */
-  /* LEARNING: Creates space between links and copyright text */
   margin-bottom: 20px;
   
-  /* LEARNING: flex-wrap: wrap - Allows links to wrap to new line on small screens */
-  /* LEARNING: On mobile, links can stack vertically if needed */
   flex-wrap: wrap;
 }
 
-/* LEARNING: Style individual footer links */
-/* LEARNING: These are the clickable FAQ and Contact links */
 .footer-link {
-  /* LEARNING: color: white - Sets link text color to white */
-  /* LEARNING: White text on dark background */
   color: white;
   
-  /* LEARNING: text-decoration: none - Removes underline from links */
-  /* LEARNING: Gives a cleaner, more modern appearance */
   text-decoration: none;
   
-  /* LEARNING: display: inline-flex - Makes link a flex container */
-  /* LEARNING: Allows us to align icon and text horizontally */
   display: inline-flex;
   
-  /* LEARNING: align-items: center - Centers items vertically */
-  /* LEARNING: Aligns icon and text on the same baseline */
   align-items: center;
   
-  /* LEARNING: gap: 8px - Adds 8 pixels of space between icon and text */
-  /* LEARNING: Creates space between the icon and the link text */
   gap: 8px;
   
-  /* LEARNING: font-size: 1rem - Sets text size to root font size */
-  /* LEARNING: Standard readable size for footer links */
   font-size: 1rem;
   
-  /* LEARNING: font-weight: 500 - Makes text semi-bold */
-  /* LEARNING: Makes links stand out slightly from regular text */
   font-weight: 500;
   
-  /* LEARNING: padding: 8px 16px - Adds space inside the link */
-  /* LEARNING: Makes the clickable area larger and more user-friendly */
   padding: 8px 16px;
   
-  /* LEARNING: border-radius: 6px - Rounds the corners slightly */
-  /* LEARNING: Creates a subtle rounded button appearance */
   border-radius: 6px;
   
-  /* LEARNING: transition: all 0.3s ease - Animates property changes */
-  /* LEARNING: Makes hover effects smooth instead of instant */
   transition: all 0.3s ease;
 }
 
-/* LEARNING: Add hover effect to footer links */
-/* LEARNING: When user hovers over a link, these styles apply */
 .footer-link:hover {
-  /* LEARNING: background: rgba(255, 255, 255, 0.1) - Adds semi-transparent white background */
-  /* LEARNING: rgba(255, 255, 255, 0.1) = white with 10% opacity */
-  /* LEARNING: Creates a subtle highlight effect on hover */
   background: rgba(255, 255, 255, 0.1);
   
-  /* LEARNING: color: #4a9eff - Changes text color to blue on hover */
-  /* LEARNING: Provides visual feedback that the link is interactive */
   color: #4a9eff;
   
-  /* LEARNING: transform: translateY(-2px) - Moves link up 2 pixels */
-  /* LEARNING: Creates a subtle "lift" effect */
   transform: translateY(-2px);
 }
 
-/* LEARNING: Style the copyright text */
-/* LEARNING: This is the "© 2025 AutoCare. All rights reserved." text */
 .footer-copyright {
-  /* LEARNING: color: rgba(255, 255, 255, 0.7) - Sets text to white with 70% opacity */
-  /* LEARNING: Slightly dimmed to create visual hierarchy (less prominent than links) */
   color: rgba(255, 255, 255, 0.7);
   
-  /* LEARNING: font-size: 0.9rem - Sets text size slightly smaller */
-  /* LEARNING: Makes copyright text less prominent */
   font-size: 0.9rem;
   
-  /* LEARNING: margin-top: 0 - No top margin (already has margin-bottom from footer-links) */
   margin-top: 0;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
-/* LEARNING: Media queries allow us to apply different styles based on screen size */
-/* LEARNING: This makes the website work well on mobile devices */
-/* LEARNING: @media (max-width: 768px) means "apply these styles when screen is 768px or smaller" */
 @media (max-width: 768px) {
-  /* LEARNING: On mobile devices, make hero title smaller */
   .hero-title {
-    /* LEARNING: font-size: 2.5rem - Reduces title size for mobile */
-    /* LEARNING: Smaller screens need smaller text */
     font-size: 2.5rem;
   }
 
-  /* LEARNING: Make hero subtitle smaller on mobile */
   .hero-subtitle {
-    /* LEARNING: font-size: 1.1rem - Reduces subtitle size */
     font-size: 1.1rem;
   }
 
-  /* LEARNING: Make section titles smaller on mobile */
   .section-title {
-    /* LEARNING: font-size: 2rem - Reduces section title size */
     font-size: 2rem;
   }
 
-  /* LEARNING: Change services grid to single column on mobile */
   .services-grid {
-    /* LEARNING: grid-template-columns: 1fr - Creates single column */
-    /* LEARNING: 1fr = one fraction = one column that takes full width */
-    /* LEARNING: On mobile, cards stack vertically instead of side-by-side */
     grid-template-columns: 1fr;
   }
 
-  /* LEARNING: Change features grid to single column on mobile */
   .features-grid {
-    /* LEARNING: grid-template-columns: 1fr - Creates single column */
     grid-template-columns: 1fr;
   }
 
-  /* LEARNING: Reduce hero section padding on mobile */
   .hero-section {
-    /* LEARNING: padding: 80px 20px 60px - Less padding on mobile */
-    /* LEARNING: Smaller screens need less padding to maximize content space */
     padding: 80px 20px 60px;
   }
 
-  /* LEARNING: Reduce hero section minimum height on mobile */
   .hero-section {
-    /* LEARNING: min-height: 400px - Smaller minimum height for mobile */
     min-height: 400px;
   }
 
-  /* LEARNING: Adjust footer links for mobile */
   .footer-links {
-    /* LEARNING: gap: 20px - Less space between links on mobile */
-    /* LEARNING: Smaller screens need tighter spacing */
     gap: 20px;
   }
 
-  /* LEARNING: Adjust footer link padding for mobile */
   .footer-link {
-    /* LEARNING: padding: 6px 12px - Smaller padding on mobile */
-    /* LEARNING: Makes links more compact on small screens */
     padding: 6px 12px;
     
-    /* LEARNING: font-size: 0.9rem - Slightly smaller text on mobile */
     font-size: 0.9rem;
   }
 
-  /* LEARNING: Adjust navbar for mobile */
   .home-navbar {
-    /* LEARNING: padding: 12px 15px - Less padding on mobile */
     padding: 12px 15px;
   }
 
-  /* LEARNING: Adjust navbar logo size for mobile */
   .home-nav-logo h1 {
-    /* LEARNING: font-size: 1.3rem - Smaller title on mobile */
     font-size: 1.3rem;
   }
 
-  /* LEARNING: Adjust dropdown menu width for mobile */
   .home-dropdown-menu {
-    /* LEARNING: min-width: 180px - Slightly narrower on mobile */
     min-width: 180px;
   }
 }
