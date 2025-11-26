@@ -4,7 +4,6 @@ import { toast } from 'react-toastify'
 import { useAuth } from '../contexts/AuthContext'
 import { AppointmentService } from '../services/supabase'
 import Navbar from '../components/Navbar'
-import CostCalculator from '../components/CostCalculator'
 import './Schedule.css'
 
 const Schedule = () => {
@@ -196,23 +195,6 @@ const Schedule = () => {
                   </div>
                 ))}
               </div>
-              
-              {selectedServices.length > 0 && (
-                <div className="cost-breakdown-section">
-                  <h3>Service Cost Breakdown</h3>
-                  <div className="services-cost-list">
-                    {selectedServices.map((service, index) => (
-                      <div key={index} className="service-cost-item">
-                        <span>{service.title}</span>
-                        <span className="service-cost-price">
-                          ${service.price?.toFixed(2) || '0.00'}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <CostCalculator services={selectedServices} />
-                </div>
-              )}
             </div>
             
             <form onSubmit={handleSubmit} className="appointment-form">

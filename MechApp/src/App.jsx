@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ToastContainer } from 'react-toastify'
 import { AuthProvider } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import Home from './pages/Home'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Account from './pages/Account'
@@ -33,7 +34,15 @@ function App() {
             theme="light"
           />
           <Routes>
-            <Route path="/" element={<Login />} />
+            {/* LEARNING: Home page route - this is the landing page users see first */}
+            {/* LEARNING: The "/" path means this is the default/root route */}
+            {/* LEARNING: When users visit the website, they'll see the Home component */}
+            <Route path="/" element={<Home />} />
+            
+            {/* LEARNING: Login page route - users navigate here when they click "Get Started" */}
+            {/* LEARNING: The "/login" path is what the Home page navigates to */}
+            <Route path="/login" element={<Login />} />
+            
             <Route 
               path="/dashboard" 
               element={
@@ -74,22 +83,11 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-            <Route 
-              path="/faq" 
-              element={
-                <ProtectedRoute>
-                  <FAQ />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/contact" 
-              element={
-                <ProtectedRoute>
-                  <Contact />
-                </ProtectedRoute>
-              } 
-            />
+            {/* LEARNING: FAQ route - accessible without login for landing page visitors */}
+            <Route path="/faq" element={<FAQ />} />
+            
+            {/* LEARNING: Contact route - accessible without login for landing page visitors */}
+            <Route path="/contact" element={<Contact />} />
             <Route 
               path="/admin" 
               element={

@@ -2,18 +2,15 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useAuth } from '../contexts/AuthContext'
-import { AppointmentService, ServicePriceService } from '../services/supabase'
+import { AppointmentService } from '../services/supabase'
 import Navbar from '../components/Navbar'
 import './Dashboard.css'
-import CostCalculator from '../components/CostCalculator'
 
 const Dashboard = () => {
   const [selectedServices, setSelectedServices] = useState([])
   const [notes, setNotes] = useState('')
   const [upcomingAppointments, setUpcomingAppointments] = useState([])
   const [loadingReminders, setLoadingReminders] = useState(true)
-  const [servicePrices, setServicePrices] = useState([])
-  const [pricesLoading, setPricesLoading] = useState(true)
   const navigate = useNavigate()
   const { user } = useAuth()
 
@@ -22,30 +19,6 @@ const Dashboard = () => {
       fetchUpcomingAppointments()
     }
   }, [user])
-
-  useEffect(() => {
-    // Async function: Fetches prices from database
-    const fetchPrices = async () => {
-      try {
-        setPricesLoading(true)
-        // Await: Pauses execution until Promise resolves
-        const result = await ServicePriceService.getAllPrices()
-        
-        // State update: Triggers component re-render
-        if (result.success) {
-          setServicePrices(result.data || [])
-        } else {
-          console.error('Failed to fetch prices:', result.error)
-        }
-      } catch (error) {
-        console.error('Error fetching prices:', error)
-      } finally {
-        setPricesLoading(false)
-      }
-    }
-    
-    fetchPrices()
-  }, [])
 
   const fetchUpcomingAppointments = async () => {
     if (!user) return
@@ -116,33 +89,13 @@ const Dashboard = () => {
   }
 
   const serviceData = {
-    'oil-change': { title: 'Oil Change', info: 'Regular engine oil replacement and filter change', duration: '30-45 min', price: 29.99 },
-    'brake-inspection': { title: 'Brake Inspection', info: 'Complete brake system check and pad replacement', duration: '1-2 hours', price: 49.99 },
-    'tire-rotation': { title: 'Tire Rotation', info: 'Rotate tires for even wear and extend tire life', duration: '20-30 min', price: 39.99 },
-    'flat-tire-repair': { title: 'Flat Tire Repair', info: 'Professional tire patching and repair services', duration: '30-45 min', price: 79.99 },
-    'wheel-alignment': { title: 'Wheel Alignment', info: 'Precise wheel alignment for optimal handling and tire wear', duration: '45-60 min', price: 19.99 },
-    'seasonal-tire-change': { title: 'Seasonal Tire Change', info: 'Switch between summer and winter tires seasonally', duration: '30-45 min', price: 99.99 }
+    'oil-change': { title: 'Oil Change', info: 'Regular engine oil replacement and filter change', duration: '30-45 min' },
+    'brake-inspection': { title: 'Brake Inspection', info: 'Complete brake system check and pad replacement', duration: '1-2 hours' },
+    'tire-rotation': { title: 'Tire Rotation', info: 'Rotate tires for even wear and extend tire life', duration: '20-30 min' },
+    'flat-tire-repair': { title: 'Flat Tire Repair', info: 'Professional tire patching and repair services', duration: '30-45 min' },
+    'wheel-alignment': { title: 'Wheel Alignment', info: 'Precise wheel alignment for optimal handling and tire wear', duration: '45-60 min' },
+    'seasonal-tire-change': { title: 'Seasonal Tire Change', info: 'Switch between summer and winter tires seasonally', duration: '30-45 min' }
   }
-
-  // Array.reduce() method: Transforms array into object
-  const getServiceDataWithPrices = () => {
-    // Spread operator: Creates shallow copy of serviceData object
-    const data = { ...serviceData }
-    
-    // Array.forEach() method: Iterates through each price from database
-    servicePrices.forEach(priceData => {
-      // Optional chaining: Safely accesses nested property
-      if (data[priceData.service_type]) {
-        // parseFloat(): Converts string to number
-        data[priceData.service_type].price = parseFloat(priceData.base_price)
-      }
-    })
-    
-    return data
-  }
-
-  // Use merged data instead of hardcoded serviceData
-  const currentServiceData = getServiceDataWithPrices()
 
   const handleServiceToggle = (serviceType) => {
     setSelectedServices(prev => {
@@ -151,10 +104,9 @@ const Dashboard = () => {
       } else {
         const service = {
           type: serviceType,
-          title: currentServiceData[serviceType].title,
-          info: currentServiceData[serviceType].info,
-          duration: currentServiceData[serviceType].duration,
-          price: currentServiceData[serviceType].price
+          title: serviceData[serviceType].title,
+          info: serviceData[serviceType].info,
+          duration: serviceData[serviceType].duration
         }
         return [...prev, service]
       }
@@ -234,7 +186,7 @@ const Dashboard = () => {
           </div>
           
           <div className="services-grid">
-            {Object.entries(currentServiceData).map(([serviceType, service]) => (
+            {Object.entries(serviceData).map(([serviceType, service]) => (
               <div key={serviceType} className="service-card" data-service={serviceType}>
                 <div className="service-checkbox">
                   <input 
@@ -258,7 +210,6 @@ const Dashboard = () => {
                 </div>
                 <h3>{service.title}</h3>
                 <p className="service-desc">{service.info}</p>
-                <p className="service-price">${service.price.toFixed(2)}</p>
                 <div className="service-details">
                   <span className="duration">{service.duration}</span>
                 </div>
@@ -279,10 +230,6 @@ const Dashboard = () => {
                       </div>
                     ))}
                   </div>
-                  
-                  {/* CostCalculator shows total cost of all selected services */}
-                  <CostCalculator services={selectedServices} />
-                  
                   <div className="notes-section">
                     <label htmlFor="serviceNotes" className="notes-label">Additional Notes (Optional)</label>
                     <textarea 
