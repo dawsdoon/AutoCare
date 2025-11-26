@@ -82,11 +82,11 @@ const Navbar = () => {
         className="nav-logo" 
         role="button" 
         tabIndex={0}
-        onClick={() => navigate('/dashboard')}
+        onClick={() => navigate(user ? '/dashboard' : '/')}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
-            navigate('/dashboard')
+            navigate(user ? '/dashboard' : '/')
           }
         }}
         style={{ cursor: 'pointer' }}
@@ -102,22 +102,26 @@ const Navbar = () => {
           )}
         </button>
         <div className={`dropdown-menu ${isMenuOpen ? 'show' : ''}`}>
-          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/account'); closeMenu(); }} className="dropdown-item">
-            <i className="fas fa-user"></i>
-            My Account
-          </a>
-          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/dashboard'); closeMenu(); }} className="dropdown-item">
-            <i className="fas fa-home"></i>
-            Services
-          </a>
-          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/service-history'); closeMenu(); }} className="dropdown-item">
-            <i className="fas fa-history"></i>
-            Service History
-          </a>
-          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/maintenance-schedule'); closeMenu(); }} className="dropdown-item">
-            <i className="fas fa-calendar-check"></i>
-            Maintenance Schedule
-          </a>
+          {user && (
+            <>
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate('/account'); closeMenu(); }} className="dropdown-item">
+                <i className="fas fa-user"></i>
+                My Account
+              </a>
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate('/dashboard'); closeMenu(); }} className="dropdown-item">
+                <i className="fas fa-home"></i>
+                Services
+              </a>
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate('/service-history'); closeMenu(); }} className="dropdown-item">
+                <i className="fas fa-history"></i>
+                Service History
+              </a>
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate('/maintenance-schedule'); closeMenu(); }} className="dropdown-item">
+                <i className="fas fa-calendar-check"></i>
+                Maintenance Schedule
+              </a>
+            </>
+          )}
           <a href="#" onClick={(e) => { e.preventDefault(); navigate('/faq'); closeMenu(); }} className="dropdown-item">
             <i className="fas fa-question-circle"></i>
             FAQ
@@ -132,10 +136,17 @@ const Navbar = () => {
               Admin Panel
             </a>
           )}
-          <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); closeMenu(); }} className="dropdown-item">
-            <i className="fas fa-sign-out-alt"></i>
-            Logout
-          </a>
+          {user ? (
+            <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); closeMenu(); }} className="dropdown-item">
+              <i className="fas fa-sign-out-alt"></i>
+              Logout
+            </a>
+          ) : (
+            <a href="#" onClick={(e) => { e.preventDefault(); navigate('/login'); closeMenu(); }} className="dropdown-item">
+              <i className="fas fa-sign-in-alt"></i>
+              Login / Sign Up
+            </a>
+          )}
         </div>
       </div>
     </nav>

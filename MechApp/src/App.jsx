@@ -35,9 +35,7 @@ function App() {
           />
           <Routes>
             <Route path="/" element={<Home />} />
-            
             <Route path="/login" element={<Login />} />
-            
             <Route 
               path="/dashboard" 
               element={
@@ -79,7 +77,6 @@ function App() {
               } 
             />
             <Route path="/faq" element={<FAQ />} />
-            
             <Route path="/contact" element={<Contact />} />
             <Route 
               path="/admin" 
