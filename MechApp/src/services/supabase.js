@@ -107,6 +107,25 @@ export class UserService {
         }
     }
 
+    static async getUserProfile(userId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('user_profiles')
+                .select('*')
+                .eq('user_id', userId)
+                .single();
+
+            if (error && error.code !== 'PGRST116') { // PGRST116 is "not found"
+                throw error;
+            }
+
+            return { success: true, data: data || null };
+        } catch (error) {
+            console.error('Get user profile error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
     static async updateUserProfile(userId, profileData) {
         try {
             const { data: { user }, error: authError } = await supabaseClient.auth.getUser();

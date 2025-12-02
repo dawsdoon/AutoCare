@@ -32,31 +32,59 @@ const Account = () => {
 
   useEffect(() => {
     if (user) {
+      fetchUserProfile()
+      setVehicleData(convertVehicleDataFromSupabase(user))
+      fetchAppointments()
+    }
+  }, [user])
+
+  const fetchUserProfile = async () => {
+    if (!user) return
+    
+    try {
+      const result = await UserService.getUserProfile(user.id)
+      if (result.success && result.data) {
+        setProfileData({
+          fullName: result.data.full_name || user.name || '',
+          phoneNumber: result.data.phone_number || '',
+          tireSize: '',
+          oilSpec: ''
+        })
+        // Load tire/oil preferences from localStorage per user
+        try {
+          const extrasKey = `autocare_profile_extras_${user.id}`
+          const raw = localStorage.getItem(extrasKey)
+          if (raw) {
+            const extras = JSON.parse(raw)
+            setProfileData(prev => ({
+              ...prev,
+              tireSize: extras.tireSize || '',
+              oilSpec: extras.oilSpec || ''
+            }))
+          }
+        } catch (_) {
+          // ignore
+        }
+      } else {
+        // Fallback to user data if profile doesn't exist
+        setProfileData({
+          fullName: user.name || '',
+          phoneNumber: '',
+          tireSize: '',
+          oilSpec: ''
+        })
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error)
+      // Fallback to user data
       setProfileData({
         fullName: user.name || '',
-        phoneNumber: user.phone || '',
+        phoneNumber: '',
         tireSize: '',
         oilSpec: ''
       })
-      setVehicleData(convertVehicleDataFromSupabase(user))
-      fetchAppointments()
-      // Load tire/oil preferences from localStorage per user
-      try {
-        const extrasKey = `autocare_profile_extras_${user.id}`
-        const raw = localStorage.getItem(extrasKey)
-        if (raw) {
-          const extras = JSON.parse(raw)
-          setProfileData(prev => ({
-            ...prev,
-            tireSize: extras.tireSize || '',
-            oilSpec: extras.oilSpec || ''
-          }))
-        }
-      } catch (_) {
-        // ignore
-      }
     }
-  }, [user])
+  }
 
   const fetchAppointments = async () => {
     if (!user) return
@@ -102,6 +130,9 @@ const Account = () => {
       })
       
       if (result.success) {
+        // Fetch updated profile to ensure we have the latest data
+        const profileResult = await UserService.getUserProfile(user.id)
+        
         // Update local user data with vehicle information
         const updatedUser = {
           ...user,
@@ -116,6 +147,15 @@ const Account = () => {
         
         // Update the AuthContext with new user data
         updateUser(updatedUser)
+
+        // Refresh profile data from database to ensure it's saved
+        if (profileResult.success && profileResult.data) {
+          setProfileData(prev => ({
+            ...prev,
+            fullName: profileResult.data.full_name || prev.fullName,
+            phoneNumber: profileResult.data.phone_number || prev.phoneNumber
+          }))
+        }
 
         // Save tire/oil preferences locally per user
         try {

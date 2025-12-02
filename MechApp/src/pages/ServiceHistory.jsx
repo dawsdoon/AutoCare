@@ -358,6 +358,8 @@ const ServiceHistory = () => {
       case 'completed': return 'status-completed'
       case 'in-progress': return 'status-in-progress'
       case 'pending': return 'status-pending'
+      case 'approved': return 'status-approved'
+      case 'rejected': return 'status-rejected'
       case 'cancelled': return 'status-cancelled'
       default: return 'status-pending'
     }
@@ -368,6 +370,8 @@ const ServiceHistory = () => {
       case 'completed': return 'Completed'
       case 'in-progress': return 'In Progress'
       case 'pending': return 'Scheduled'
+      case 'approved': return 'Approved'
+      case 'rejected': return 'Rejected'
       case 'cancelled': return 'Cancelled'
       default: return 'Scheduled'
     }
@@ -700,6 +704,12 @@ const ServiceHistory = () => {
                         Scheduled ({appointments.filter(a => a.status === 'pending').length})
                       </button>
                       <button 
+                        className={`filter-btn ${filterStatus === 'approved' ? 'active' : ''}`}
+                        onClick={() => setFilterStatus('approved')}
+                      >
+                        Approved ({appointments.filter(a => a.status === 'approved').length})
+                      </button>
+                      <button 
                         className={`filter-btn ${filterStatus === 'in-progress' ? 'active' : ''}`}
                         onClick={() => setFilterStatus('in-progress')}
                       >
@@ -779,7 +789,7 @@ const ServiceHistory = () => {
                             <i className="fas fa-file-pdf"></i>
                             Download PDF
                           </button>
-                          {(appointment.status === 'pending' || appointment.status === 'in-progress') && (
+                          {(appointment.status === 'pending' || appointment.status === 'approved' || appointment.status === 'in-progress') && (
                             <>
                               <button 
                                 className="btn-secondary"
