@@ -82,11 +82,11 @@ const Navbar = () => {
         className="nav-logo" 
         role="button" 
         tabIndex={0}
-        onClick={() => navigate(user ? '/dashboard' : '/')}
+        onClick={() => navigate(user ? (user.role === 'admin' ? '/admin' : '/dashboard') : '/')}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
-            navigate(user ? '/dashboard' : '/')
+            navigate(user ? (user.role === 'admin' ? '/admin' : '/dashboard') : '/')
           }
         }}
         style={{ cursor: 'pointer' }}
@@ -102,7 +102,24 @@ const Navbar = () => {
           )}
         </button>
         <div className={`dropdown-menu ${isMenuOpen ? 'show' : ''}`}>
-          {user && (
+          {user && user.role === 'admin' ? (
+            // Admin menu
+            <>
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate('/admin'); closeMenu(); }} className="dropdown-item">
+                <i className="fas fa-home"></i>
+                Dashboard
+              </a>
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate('/admin/appointments'); closeMenu(); }} className="dropdown-item">
+                <i className="fas fa-calendar-alt"></i>
+                Appointments
+              </a>
+              <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); closeMenu(); }} className="dropdown-item">
+                <i className="fas fa-sign-out-alt"></i>
+                Logout
+              </a>
+            </>
+          ) : user ? (
+            // Regular user menu
             <>
               <a href="#" onClick={(e) => { e.preventDefault(); navigate('/account'); closeMenu(); }} className="dropdown-item">
                 <i className="fas fa-user"></i>
@@ -120,32 +137,35 @@ const Navbar = () => {
                 <i className="fas fa-calendar-check"></i>
                 Maintenance Schedule
               </a>
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate('/faq'); closeMenu(); }} className="dropdown-item">
+                <i className="fas fa-question-circle"></i>
+                FAQ
+              </a>
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate('/contact'); closeMenu(); }} className="dropdown-item">
+                <i className="fas fa-phone"></i>
+                Contact
+              </a>
+              <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); closeMenu(); }} className="dropdown-item">
+                <i className="fas fa-sign-out-alt"></i>
+                Logout
+              </a>
             </>
-          )}
-          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/faq'); closeMenu(); }} className="dropdown-item">
-            <i className="fas fa-question-circle"></i>
-            FAQ
-          </a>
-          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/contact'); closeMenu(); }} className="dropdown-item">
-            <i className="fas fa-phone"></i>
-            Contact
-          </a>
-          {user && user.role === 'admin' && (
-            <a href="#" onClick={(e) => { e.preventDefault(); navigate('/admin'); closeMenu(); }} className="dropdown-item">
-              <i className="fas fa-cog"></i>
-              Admin Panel
-            </a>
-          )}
-          {user ? (
-            <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); closeMenu(); }} className="dropdown-item">
-              <i className="fas fa-sign-out-alt"></i>
-              Logout
-            </a>
           ) : (
-            <a href="#" onClick={(e) => { e.preventDefault(); navigate('/login'); closeMenu(); }} className="dropdown-item">
-              <i className="fas fa-sign-in-alt"></i>
-              Login / Sign Up
-            </a>
+            // Not logged in menu
+            <>
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate('/faq'); closeMenu(); }} className="dropdown-item">
+                <i className="fas fa-question-circle"></i>
+                FAQ
+              </a>
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate('/contact'); closeMenu(); }} className="dropdown-item">
+                <i className="fas fa-phone"></i>
+                Contact
+              </a>
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate('/login'); closeMenu(); }} className="dropdown-item">
+                <i className="fas fa-sign-in-alt"></i>
+                Login / Sign Up
+              </a>
+            </>
           )}
         </div>
       </div>

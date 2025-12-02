@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useAuth } from '../contexts/AuthContext'
-import { AppointmentService } from '../services/supabase'
+import { AppointmentService, UserService } from '../services/supabase'
 import Navbar from '../components/Navbar'
 import CostCalculator from '../components/CostCalculator'
 import './Schedule.css'
@@ -38,13 +38,42 @@ const Schedule = () => {
 
     // Pre-fill customer information from user data
     if (user) {
+      fetchUserProfile()
+    }
+  }, [user])
+
+  const fetchUserProfile = async () => {
+    if (!user) return
+    
+    try {
+      const result = await UserService.getUserProfile(user.id)
+      if (result.success && result.data) {
+        setAppointmentData(prev => ({
+          ...prev,
+          customerName: result.data.full_name || user.name || '',
+          customerEmail: user.email || '',
+          customerPhone: result.data.phone_number || ''
+        }))
+      } else {
+        // Fallback to user data if profile doesn't exist
+        setAppointmentData(prev => ({
+          ...prev,
+          customerName: user.name || '',
+          customerEmail: user.email || '',
+          customerPhone: ''
+        }))
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error)
+      // Fallback to user data
       setAppointmentData(prev => ({
         ...prev,
         customerName: user.name || '',
-        customerEmail: user.email || ''
+        customerEmail: user.email || '',
+        customerPhone: ''
       }))
     }
-  }, [user])
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target

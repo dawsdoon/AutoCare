@@ -79,7 +79,7 @@ const Login = () => {
       
       if (result.success) {
         // Check if user is admin and redirect accordingly
-        const userRole = result.data?.user?.user_metadata?.role || 'customer'
+        const userRole = result.data?.user?.role || 'customer'
         if (userRole === 'admin') {
           navigate('/admin')
         } else {

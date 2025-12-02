@@ -118,7 +118,7 @@ export const AuthProvider = ({ children }) => {
         }
         setUser(userData)
         localStorage.setItem('autocare_user', JSON.stringify(userData))
-        return { success: true }
+        return { success: true, data: { user: userData } }
       } else {
         return { success: false, error: result.error }
       }
