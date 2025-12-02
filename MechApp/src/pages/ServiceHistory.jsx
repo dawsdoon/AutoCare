@@ -7,6 +7,12 @@ import autoTable from 'jspdf-autotable'
 import { useAuth } from '../contexts/AuthContext'
 import { AppointmentService, ServicePriceService } from '../services/supabase'
 import Navbar from '../components/Navbar'
+import { 
+  exportAppointmentToCalendar, 
+  exportAllAppointmentsToCalendar,
+  generateGoogleCalendarURL,
+  generateOutlookCalendarURL 
+} from '../utils/calendarExport'
 import './ServiceHistory.css'
 
 const ServiceHistory = () => {
@@ -525,14 +531,34 @@ const ServiceHistory = () => {
                 <p>View your past and upcoming appointments</p>
               </div>
               {appointments.length > 0 && (
-                <button 
-                  className="btn-download-all"
-                  onClick={handleDownloadAllPDF}
-                  title="Download all service history as PDF"
-                >
-                  <i className="fas fa-file-pdf"></i>
-                  Download All PDF
-                </button>
+                <div className="header-actions">
+                  <button 
+                    className="btn-download-all"
+                    onClick={() => {
+                      const upcomingAppointments = appointments.filter(a => 
+                        a.status !== 'completed' && a.status !== 'cancelled'
+                      )
+                      if (upcomingAppointments.length === 0) {
+                        toast.info('No upcoming appointments to export')
+                        return
+                      }
+                      exportAllAppointmentsToCalendar(upcomingAppointments)
+                      toast.success('Calendar file downloaded!')
+                    }}
+                    title="Export upcoming appointments to calendar"
+                  >
+                    <i className="fas fa-calendar-plus"></i>
+                    Export to Calendar
+                  </button>
+                  <button 
+                    className="btn-download-all"
+                    onClick={handleDownloadAllPDF}
+                    title="Download all service history as PDF"
+                  >
+                    <i className="fas fa-file-pdf"></i>
+                    Download All PDF
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -789,6 +815,46 @@ const ServiceHistory = () => {
                             <i className="fas fa-file-pdf"></i>
                             Download PDF
                           </button>
+                          
+                          {/* Calendar Export Dropdown */}
+                          <div className="calendar-export-dropdown">
+                            <button 
+                              className="btn-secondary btn-calendar"
+                              title="Add to Calendar"
+                            >
+                              <i className="fas fa-calendar-plus"></i>
+                              Add to Calendar
+                              <i className="fas fa-chevron-down dropdown-arrow"></i>
+                            </button>
+                            <div className="calendar-dropdown-menu">
+                              <button 
+                                onClick={() => {
+                                  exportAppointmentToCalendar(appointment)
+                                  toast.success('Calendar file downloaded!')
+                                }}
+                              >
+                                <i className="fas fa-download"></i>
+                                Download .ics File
+                              </button>
+                              <a 
+                                href={generateGoogleCalendarURL(appointment)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <i className="fab fa-google"></i>
+                                Google Calendar
+                              </a>
+                              <a 
+                                href={generateOutlookCalendarURL(appointment)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <i className="fab fa-microsoft"></i>
+                                Outlook Calendar
+                              </a>
+                            </div>
+                          </div>
+
                           {(appointment.status === 'pending' || appointment.status === 'approved' || appointment.status === 'in-progress') && (
                             <>
                               <button 

@@ -14,14 +14,41 @@ const Dashboard = () => {
   const [loadingReminders, setLoadingReminders] = useState(true)
   const [servicePrices, setServicePrices] = useState([])
   const [pricesLoading, setPricesLoading] = useState(true)
+  const [vehicles, setVehicles] = useState([])
+  const [selectedVehicle, setSelectedVehicle] = useState(null)
   const navigate = useNavigate()
   const { user } = useAuth()
 
   useEffect(() => {
     if (user) {
       fetchUpcomingAppointments()
+      loadVehicles()
     }
   }, [user])
+
+  // Load vehicles from localStorage
+  const loadVehicles = () => {
+    if (!user) return
+    try {
+      const stored = localStorage.getItem(`autocare_vehicles_${user.id}`)
+      if (stored) {
+        const loadedVehicles = JSON.parse(stored)
+        setVehicles(loadedVehicles)
+        // Auto-select primary vehicle or first vehicle
+        if (loadedVehicles.length > 0) {
+          const primary = loadedVehicles.find(v => v.isPrimary) || loadedVehicles[0]
+          setSelectedVehicle(primary)
+        }
+      }
+    } catch (error) {
+      console.error('Error loading vehicles:', error)
+    }
+  }
+
+  const getVehicleDisplayName = (vehicle) => {
+    if (vehicle.nickname) return vehicle.nickname
+    return `${vehicle.year} ${vehicle.make} ${vehicle.model}`
+  }
 
   useEffect(() => {
     // Async function: Fetches prices from database
@@ -173,6 +200,21 @@ const Dashboard = () => {
     }))
     
     localStorage.setItem('selectedServices', JSON.stringify(servicesToStore))
+    
+    // Store selected vehicle info if available
+    if (selectedVehicle) {
+      localStorage.setItem('selectedVehicle', JSON.stringify({
+        id: selectedVehicle.id,
+        make: selectedVehicle.make,
+        model: selectedVehicle.model,
+        year: selectedVehicle.year,
+        nickname: selectedVehicle.nickname,
+        displayName: getVehicleDisplayName(selectedVehicle)
+      }))
+    } else {
+      localStorage.removeItem('selectedVehicle')
+    }
+    
     navigate('/schedule')
   }
 
@@ -282,6 +324,66 @@ const Dashboard = () => {
                   
                   {/* CostCalculator shows total cost of all selected services */}
                   <CostCalculator services={selectedServices} />
+
+                  {/* Vehicle Selection */}
+                  {vehicles.length > 0 && (
+                    <div className="vehicle-selection-section">
+                      <label className="vehicle-selection-label">
+                        <i className="fas fa-car"></i>
+                        Select Vehicle
+                      </label>
+                      <div className="vehicle-selector-dropdown">
+                        <select
+                          value={selectedVehicle?.id || ''}
+                          onChange={(e) => {
+                            const vehicle = vehicles.find(v => v.id === e.target.value)
+                            setSelectedVehicle(vehicle)
+                          }}
+                          className="vehicle-select"
+                        >
+                          {vehicles.map(vehicle => (
+                            <option key={vehicle.id} value={vehicle.id}>
+                              {getVehicleDisplayName(vehicle)}
+                              {vehicle.isPrimary ? ' ★' : ''}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      {selectedVehicle && (
+                        <div className="selected-vehicle-preview">
+                          <div className="vehicle-preview-icon">
+                            <i className="fas fa-car"></i>
+                          </div>
+                          <div className="vehicle-preview-info">
+                            <span className="vehicle-preview-name">
+                              {getVehicleDisplayName(selectedVehicle)}
+                            </span>
+                            {selectedVehicle.nickname && (
+                              <span className="vehicle-preview-details">
+                                {selectedVehicle.year} {selectedVehicle.make} {selectedVehicle.model}
+                              </span>
+                            )}
+                          </div>
+                          {selectedVehicle.isPrimary && (
+                            <span className="vehicle-primary-badge">Primary</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {vehicles.length === 0 && (
+                    <div className="no-vehicle-notice">
+                      <i className="fas fa-info-circle"></i>
+                      <span>
+                        No vehicles added yet.{' '}
+                        <a href="/account" onClick={(e) => { e.preventDefault(); navigate('/account') }}>
+                          Add a vehicle
+                        </a>
+                        {' '}to track maintenance.
+                      </span>
+                    </div>
+                  )}
                   
                   <div className="notes-section">
                     <label htmlFor="serviceNotes" className="notes-label">Additional Notes (Optional)</label>

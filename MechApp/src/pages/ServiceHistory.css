@@ -12,41 +12,46 @@
   gap: 1rem;
 }
 
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .service-history-header h2 {
-  font-size: 2.5rem;
-  color: #2c3e50;
+  font-size: var(--font-size-4xl, 2.5rem);
+  color: var(--text-primary, #ffffff);
   margin-bottom: 0.5rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold, 700);
   text-align: center;
 }
 
 .service-history-header p {
-  font-size: 1.1rem;
-  color: #7f8c8d;
+  font-size: var(--font-size-lg, 1.1rem);
+  color: var(--text-secondary, #b0b0b0);
   margin: 0;
   text-align: center;
 }
 
 .btn-download-all {
-  background: #e74c3c;
+  background: linear-gradient(135deg, var(--color-primary, #4a9eff) 0%, var(--color-primary-hover, #357abd) 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  border-radius: var(--radius-md, 8px);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold, 600);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base, 0.3s ease);
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+  box-shadow: var(--shadow-primary, 0 2px 8px rgba(74, 158, 255, 0.3));
 }
 
 .btn-download-all:hover {
-  background: #c0392b;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+  box-shadow: 0 4px 12px var(--color-primary-glow, rgba(74, 158, 255, 0.4));
 }
 
 /* Loading State */
@@ -799,4 +804,105 @@
     width: 100%;
     justify-content: center;
   }
+
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .header-actions .btn-download-all {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Calendar Export Dropdown */
+.calendar-export-dropdown {
+  position: relative;
+}
+
+.btn-calendar {
+  position: relative;
+}
+
+.dropdown-arrow {
+  font-size: 0.7rem;
+  margin-left: 4px;
+  transition: transform var(--transition-base, 0.3s ease);
+}
+
+.calendar-export-dropdown:hover .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.calendar-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--bg-card, white);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: var(--shadow-lg, 0 10px 25px rgba(0, 0, 0, 0.2));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  min-width: 200px;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all var(--transition-base, 0.3s ease);
+}
+
+.calendar-export-dropdown:hover .calendar-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(5px);
+}
+
+.calendar-dropdown-menu button,
+.calendar-dropdown-menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  color: var(--text-primary, #2c3e50);
+  text-decoration: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition-base, 0.3s ease);
+  text-align: left;
+}
+
+.calendar-dropdown-menu button:hover,
+.calendar-dropdown-menu a:hover {
+  background: var(--bg-surface, rgba(74, 158, 255, 0.1));
+  color: var(--color-primary, #4a9eff);
+}
+
+.calendar-dropdown-menu button:first-child,
+.calendar-dropdown-menu a:first-child {
+  border-radius: var(--radius-md, 8px) var(--radius-md, 8px) 0 0;
+}
+
+.calendar-dropdown-menu button:last-child,
+.calendar-dropdown-menu a:last-child {
+  border-radius: 0 0 var(--radius-md, 8px) var(--radius-md, 8px);
+}
+
+.calendar-dropdown-menu i {
+  width: 20px;
+  text-align: center;
+}
+
+.calendar-dropdown-menu .fa-google {
+  color: #4285f4;
+}
+
+.calendar-dropdown-menu .fa-microsoft {
+  color: #00a4ef;
+}
+
+.calendar-dropdown-menu .fa-download {
+  color: var(--color-primary, #4a9eff);
 }

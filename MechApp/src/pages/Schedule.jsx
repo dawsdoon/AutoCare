@@ -9,6 +9,7 @@ import './Schedule.css'
 
 const Schedule = () => {
   const [selectedServices, setSelectedServices] = useState([])
+  const [selectedVehicle, setSelectedVehicle] = useState(null)
   const [appointmentData, setAppointmentData] = useState({
     date: '',
     time: '',
@@ -33,6 +34,16 @@ const Schedule = () => {
         setSelectedServices(JSON.parse(storedServices))
       } catch (error) {
         console.error('Error parsing stored services:', error)
+      }
+    }
+
+    // Load selected vehicle from localStorage
+    const storedVehicle = localStorage.getItem('selectedVehicle')
+    if (storedVehicle) {
+      try {
+        setSelectedVehicle(JSON.parse(storedVehicle))
+      } catch (error) {
+        console.error('Error parsing stored vehicle:', error)
       }
     }
 
@@ -153,6 +164,17 @@ const Schedule = () => {
         `${service.title}: ${service.info}`
       ).join('\n')
 
+      // Build vehicle info string
+      const vehicleInfo = selectedVehicle 
+        ? `${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}${selectedVehicle.nickname ? ` (${selectedVehicle.nickname})` : ''}`
+        : ''
+
+      // Combine notes with vehicle info
+      const combinedNotes = [
+        vehicleInfo ? `Vehicle: ${vehicleInfo}` : '',
+        ...selectedServices.map(s => s.notes).filter(Boolean)
+      ].filter(Boolean).join('\n')
+
       const appointmentPayload = {
         userId: user.id,
         serviceName: serviceNames,
@@ -162,7 +184,7 @@ const Schedule = () => {
         customerName: appointmentData.customerName,
         customerEmail: appointmentData.customerEmail,
         customerPhone: appointmentData.customerPhone,
-        notes: selectedServices.map(s => s.notes).filter(Boolean).join('\n')
+        notes: combinedNotes
       }
 
       const result = await AppointmentService.createAppointment(appointmentPayload)
@@ -186,6 +208,7 @@ const Schedule = () => {
         
         toast.success('Appointment booked successfully!')
         localStorage.removeItem('selectedServices')
+        localStorage.removeItem('selectedVehicle')
         navigate('/dashboard')
       } else {
         toast.error(result.error || 'Failed to book appointment')
@@ -213,6 +236,31 @@ const Schedule = () => {
           
           <div className="schedule-content">
             <div className="selected-services-summary">
+              {/* Selected Vehicle Display */}
+              {selectedVehicle && (
+                <div className="selected-vehicle-section">
+                  <h3>
+                    <i className="fas fa-car"></i>
+                    Selected Vehicle
+                  </h3>
+                  <div className="vehicle-display-card">
+                    <div className="vehicle-display-icon">
+                      <i className="fas fa-car"></i>
+                    </div>
+                    <div className="vehicle-display-info">
+                      <span className="vehicle-display-name">
+                        {selectedVehicle.displayName || selectedVehicle.nickname || `${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`}
+                      </span>
+                      {selectedVehicle.nickname && (
+                        <span className="vehicle-display-details">
+                          {selectedVehicle.year} {selectedVehicle.make} {selectedVehicle.model}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <h3>Selected Services</h3>
               <div className="services-list">
                 {selectedServices.map((service, index) => (

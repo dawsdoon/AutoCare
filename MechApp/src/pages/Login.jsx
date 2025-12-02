@@ -133,9 +133,11 @@ const Login = () => {
       const result = await signUp(signupData.email, signupData.password, userData)
       
       if (result.success) {
+        const userId = result.data.user.id
+        
         // Create user profile
         try {
-          await UserService.createUserProfile(result.data.user.id, {
+          await UserService.createUserProfile(userId, {
             fullName: fullName,
             phoneNumber: null,
             vehicleMake: userData.vehicleMake,
@@ -146,6 +148,31 @@ const Login = () => {
           console.error('Error creating user profile:', error)
           // Continue anyway - profile can be created later
         }
+
+        // Add vehicle to garage if vehicle info was provided
+        if (vehicleData.make && vehicleData.model && vehicleData.year) {
+          try {
+            const newVehicle = {
+              id: `vehicle_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+              make: vehicleData.make,
+              model: vehicleData.model,
+              year: vehicleData.year,
+              nickname: '',
+              color: '',
+              licensePlate: '',
+              currentMileage: '',
+              tireSize: '',
+              oilSpec: '',
+              isPrimary: true,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            }
+            localStorage.setItem(`autocare_vehicles_${userId}`, JSON.stringify([newVehicle]))
+          } catch (error) {
+            console.error('Error saving vehicle to garage:', error)
+            // Continue anyway - vehicle can be added later
+          }
+        }
         
         toast.success('Account created successfully! Welcome to AutoCare!')
         navigate('/dashboard')
@@ -153,7 +180,8 @@ const Login = () => {
         showError('emailError', result.error)
       }
     } catch (error) {
-      showError('emailError', 'An error occurred. Please try again.')
+      console.error('Signup error:', error)
+      showError('emailError', error.message || 'An error occurred. Please try again.')
     } finally {
       setLoading(false)
     }

@@ -3,27 +3,15 @@ import { toast } from 'react-toastify'
 import { useAuth } from '../contexts/AuthContext'
 import { UserService, AppointmentService } from '../services/supabase'
 import Navbar from '../components/Navbar'
-import VehicleSelector from '../components/VehicleSelector'
-import { convertVehicleDataFromSupabase, convertVehicleDataToSupabase } from '../utils/dataMigration'
+import VehicleGarage from '../components/VehicleGarage'
 import './Account.css'
 
 const Account = () => {
-  // Minimal preset options; can be expanded later
-  const oilSpecOptions = ['0W-20', '5W-20', '5W-30', '10W-30', 'Dexos1 Gen 3']
-  const tireSizeOptions = ['195/65R15', '205/55R16', '215/60R16', '225/45R17', '235/45R18']
-
   const [loading, setLoading] = useState(false)
   const [appointmentsLoading, setAppointmentsLoading] = useState(false)
   const [profileData, setProfileData] = useState({
     fullName: '',
-    phoneNumber: '',
-    tireSize: '',
-    oilSpec: ''
-  })
-  const [vehicleData, setVehicleData] = useState({
-    make: '',
-    model: '',
-    year: ''
+    phoneNumber: ''
   })
   const [appointments, setAppointments] = useState([])
   const [errors, setErrors] = useState({})
@@ -33,7 +21,6 @@ const Account = () => {
   useEffect(() => {
     if (user) {
       fetchUserProfile()
-      setVehicleData(convertVehicleDataFromSupabase(user))
       fetchAppointments()
     }
   }, [user])
@@ -46,32 +33,13 @@ const Account = () => {
       if (result.success && result.data) {
         setProfileData({
           fullName: result.data.full_name || user.name || '',
-          phoneNumber: result.data.phone_number || '',
-          tireSize: '',
-          oilSpec: ''
+          phoneNumber: result.data.phone_number || ''
         })
-        // Load tire/oil preferences from localStorage per user
-        try {
-          const extrasKey = `autocare_profile_extras_${user.id}`
-          const raw = localStorage.getItem(extrasKey)
-          if (raw) {
-            const extras = JSON.parse(raw)
-            setProfileData(prev => ({
-              ...prev,
-              tireSize: extras.tireSize || '',
-              oilSpec: extras.oilSpec || ''
-            }))
-          }
-        } catch (_) {
-          // ignore
-        }
       } else {
         // Fallback to user data if profile doesn't exist
         setProfileData({
           fullName: user.name || '',
-          phoneNumber: '',
-          tireSize: '',
-          oilSpec: ''
+          phoneNumber: ''
         })
       }
     } catch (error) {
@@ -79,9 +47,7 @@ const Account = () => {
       // Fallback to user data
       setProfileData({
         fullName: user.name || '',
-        phoneNumber: '',
-        tireSize: '',
-        oilSpec: ''
+        phoneNumber: ''
       })
     }
   }
@@ -112,37 +78,27 @@ const Account = () => {
     }))
   }
 
-  const handleVehicleChange = (vehicle) => {
-    setVehicleData(vehicle)
-  }
-
   const handleSave = async (e) => {
     e.preventDefault()
     setLoading(true)
     setErrors({})
 
     try {
-      // Persist user profile core data to backend (exclude tire/oil for now)
+      // Persist user profile core data to backend
       const result = await UserService.updateUserProfile(user.id, {
         fullName: profileData.fullName,
-        phoneNumber: profileData.phoneNumber,
-        ...convertVehicleDataToSupabase(vehicleData)
+        phoneNumber: profileData.phoneNumber
       })
       
       if (result.success) {
         // Fetch updated profile to ensure we have the latest data
         const profileResult = await UserService.getUserProfile(user.id)
         
-        // Update local user data with vehicle information
+        // Update local user data
         const updatedUser = {
           ...user,
           name: profileData.fullName,
-          phone: profileData.phoneNumber,
-          vehicle: {
-            make: vehicleData.make,
-            model: vehicleData.model,
-            year: vehicleData.year ? parseInt(vehicleData.year) : null
-          }
+          phone: profileData.phoneNumber
         }
         
         // Update the AuthContext with new user data
@@ -155,17 +111,6 @@ const Account = () => {
             fullName: profileResult.data.full_name || prev.fullName,
             phoneNumber: profileResult.data.phone_number || prev.phoneNumber
           }))
-        }
-
-        // Save tire/oil preferences locally per user
-        try {
-          const extrasKey = `autocare_profile_extras_${user.id}`
-          localStorage.setItem(extrasKey, JSON.stringify({
-            tireSize: profileData.tireSize,
-            oilSpec: profileData.oilSpec
-          }))
-        } catch (_) {
-          // ignore localStorage failures
         }
         
         toast.success('Profile updated successfully!')
@@ -188,13 +133,20 @@ const Account = () => {
         <div className="container">
           <div className="account-header">
             <h2>My Account</h2>
-            <p>Manage your profile and vehicle information</p>
+            <p>Manage your profile and vehicles</p>
           </div>
           
           <div className="account-card">
             <form onSubmit={handleSave}>
               <div className="form-section">
                 <h3>Personal Information</h3>
+                <div className="form-group">
+                  <label htmlFor="email">Email Address</label>
+                  <div className="email-display">
+                    <i className="fas fa-envelope"></i>
+                    <span>{user?.email || 'No email'}</span>
+                  </div>
+                </div>
                 <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="fullName">Full Name</label>
@@ -220,54 +172,6 @@ const Account = () => {
                     />
                   </div>
                 </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="tireSize">Tire Size</label>
-                    <select
-                      id="tireSize"
-                      name="tireSize"
-                      value={profileData.tireSize}
-                      onChange={handleInputChange}
-                      className="form-input"
-                    >
-                      <option value="">Select Tire Size</option>
-                      {tireSizeOptions.map(size => (
-                        <option key={size} value={size}>{size}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="oilSpec">Oil Specification</label>
-                    <select
-                      id="oilSpec"
-                      name="oilSpec"
-                      value={profileData.oilSpec}
-                      onChange={handleInputChange}
-                      className="form-input"
-                    >
-                      <option value="">Select Oil Spec</option>
-                      {oilSpecOptions.map(spec => (
-                        <option key={spec} value={spec}>{spec}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="form-section">
-                <h3>Vehicle Information</h3>
-                {user.vehicle && (user.vehicle.make || user.vehicle.model || user.vehicle.year) && (
-                  <div className="current-vehicle-info">
-                    <p><strong>Current Vehicle:</strong> {user.vehicle.year} {user.vehicle.make} {user.vehicle.model}</p>
-                  </div>
-                )}
-                <VehicleSelector
-                  selectedMake={vehicleData.make}
-                  selectedModel={vehicleData.model}
-                  selectedYear={vehicleData.year}
-                  onSelectionChange={handleVehicleChange}
-                  className="account-vehicle-selector"
-                />
               </div>
               
               {errors.general && (
@@ -288,6 +192,9 @@ const Account = () => {
               </div>
             </form>
           </div>
+
+          {/* Vehicle Garage - Multi-Vehicle Support */}
+          <VehicleGarage userId={user?.id} />
           
           {/* Appointments Section */}
           <div className="appointments-section">
