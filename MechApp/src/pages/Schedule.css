@@ -1,44 +1,102 @@
 /* Schedule Page Styles */
 .schedule-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: var(--spacing-2xl, 40px);
 }
 
 .schedule-header h2 {
-  color: #ffffff;
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 10px;
+  color: var(--text-primary, #ffffff);
+  font-size: var(--font-size-4xl, 2.5rem);
+  font-weight: var(--font-weight-bold, 700);
+  margin-bottom: var(--spacing-sm, 10px);
 }
 
 .schedule-header p {
-  color: #b0b0b0;
-  font-size: 1.1rem;
+  color: var(--text-secondary, #b0b0b0);
+  font-size: var(--font-size-lg, 1.1rem);
 }
 
 .schedule-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  max-width: 1200px;
+  gap: var(--spacing-2xl, 40px);
+  max-width: var(--container-max-width, 1200px);
   margin: 0 auto;
 }
 
 .selected-services-summary {
-  background: rgba(30, 30, 46, 0.95);
+  background: var(--bg-card, rgba(30, 30, 46, 0.95));
   backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl, 15px);
+  padding: var(--spacing-xl, 30px);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
   height: fit-content;
 }
 
 .selected-services-summary h3 {
-  color: #ffffff;
+  color: var(--text-primary, #ffffff);
   font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 20px;
+  font-weight: var(--font-weight-semibold, 600);
+  margin-bottom: var(--spacing-lg, 20px);
   text-align: center;
+}
+
+/* Selected Vehicle Section */
+.selected-vehicle-section {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+}
+
+.selected-vehicle-section h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.selected-vehicle-section h3 i {
+  color: var(--color-primary, #4a9eff);
+}
+
+.vehicle-display-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: var(--bg-surface, rgba(255, 255, 255, 0.05));
+  border-radius: var(--radius-lg, 12px);
+  border: 1px solid var(--color-primary, #4a9eff);
+}
+
+.vehicle-display-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--color-primary, #4a9eff) 0%, var(--color-primary-hover, #357abd) 100%);
+  border-radius: var(--radius-md, 8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: white;
+}
+
+.vehicle-display-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vehicle-display-name {
+  color: var(--text-primary, #ffffff);
+  font-weight: var(--font-weight-semibold, 600);
+  font-size: 1.1rem;
+}
+
+.vehicle-display-details {
+  color: var(--text-secondary, #b0b0b0);
+  font-size: 0.9rem;
 }
 
 .services-list {
@@ -69,13 +127,79 @@
 }
 
 .duration {
-  background: rgba(74, 158, 255, 0.1);
-  color: #4a9eff;
+  background: var(--color-primary-light, rgba(74, 158, 255, 0.1));
+  color: var(--color-primary, #4a9eff);
   padding: 4px 8px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg, 12px);
   font-size: 0.8rem;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium, 500);
   display: inline-block;
+}
+
+/* Selected Vehicle Section */
+.selected-vehicle-section {
+  margin-top: var(--spacing-xl, 30px);
+  padding: var(--spacing-lg, 20px);
+  background: var(--color-primary-light, rgba(74, 158, 255, 0.1));
+  border: 1px solid var(--color-primary, #4a9eff);
+  border-radius: var(--radius-lg, 12px);
+}
+
+.selected-vehicle-section h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 10px);
+  color: var(--text-primary, #ffffff);
+  font-size: 1.1rem;
+  font-weight: var(--font-weight-semibold, 600);
+  margin-bottom: var(--spacing-md, 15px);
+  text-align: left !important;
+}
+
+.selected-vehicle-section h3 i {
+  color: var(--color-primary, #4a9eff);
+}
+
+.vehicle-display-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md, 15px);
+  padding: var(--spacing-md, 15px);
+  background: var(--bg-surface, rgba(255, 255, 255, 0.05));
+  border-radius: var(--radius-md, 8px);
+}
+
+.vehicle-display-icon {
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, var(--color-primary, #4a9eff) 0%, var(--color-primary-hover, #357abd) 100%);
+  border-radius: var(--radius-md, 10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.vehicle-display-icon i {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.vehicle-display-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vehicle-display-name {
+  color: var(--text-primary, #ffffff);
+  font-weight: var(--font-weight-medium, 500);
+  font-size: 1rem;
+}
+
+.vehicle-display-details {
+  color: var(--text-secondary, #b0b0b0);
+  font-size: var(--font-size-sm, 0.875rem);
 }
 
 /* Cost Breakdown Styles */

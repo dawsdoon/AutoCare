@@ -1,10 +1,34 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import './FAQ.css'
 
 const FAQ = () => {
   const { user } = useAuth()
+  const navigate = useNavigate()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
+
+  const closeMenu = () => {
+    setIsMenuOpen(false)
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isMenuOpen && !event.target.closest('.faq-nav-actions')) {
+        closeMenu()
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside)
+    
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [isMenuOpen])
   const faqs = [
     {
       question: "How do I add my vehicle to the system?",
@@ -49,11 +73,68 @@ const FAQ = () => {
   ]
 
   return (
-    <div className="faq-container">
-      <div className="faq-header">
-        <h1>Frequently Asked Questions</h1>
-        <p>Find answers to common questions about AutoCare</p>
-      </div>
+    <div className="faq-page">
+      <nav className="faq-navbar">
+        <div 
+          className="faq-nav-logo" 
+          role="button" 
+          tabIndex={0}
+          onClick={() => navigate(user ? '/dashboard' : '/')}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              navigate(user ? '/dashboard' : '/')
+            }
+          }}
+          style={{ cursor: 'pointer' }}
+        >
+          <i className="fas fa-car"></i>
+          <h1>AutoCare</h1>
+        </div>
+        
+        <div className="faq-nav-actions">
+          <button className="faq-menu-toggle" onClick={toggleMenu}>
+            <i className="fas fa-bars"></i>
+          </button>
+          
+          <div className={`faq-dropdown-menu ${isMenuOpen ? 'show' : ''}`}>
+            <a href="#" onClick={(e) => { e.preventDefault(); navigate('/'); closeMenu(); }} className="faq-dropdown-item">
+              <i className="fas fa-home"></i>
+              Home
+            </a>
+            
+            {user && (
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate('/dashboard'); closeMenu(); }} className="faq-dropdown-item">
+                <i className="fas fa-tachometer-alt"></i>
+                Dashboard
+              </a>
+            )}
+            
+            <a href="#" onClick={(e) => { e.preventDefault(); navigate('/faq'); closeMenu(); }} className="faq-dropdown-item active">
+              <i className="fas fa-question-circle"></i>
+              FAQ
+            </a>
+            
+            <a href="#" onClick={(e) => { e.preventDefault(); navigate('/contact'); closeMenu(); }} className="faq-dropdown-item">
+              <i className="fas fa-phone"></i>
+              Contact Us
+            </a>
+            
+            {!user && (
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate('/login'); closeMenu(); }} className="faq-dropdown-item">
+                <i className="fas fa-sign-in-alt"></i>
+                Login / Sign Up
+              </a>
+            )}
+          </div>
+        </div>
+      </nav>
+
+      <div className="faq-container">
+        <div className="faq-header">
+          <h1>Frequently Asked Questions</h1>
+          <p>Find answers to common questions about AutoCare</p>
+        </div>
       
       <div className="faq-content">
         {faqs.map((faq, index) => (
@@ -90,6 +171,7 @@ const FAQ = () => {
           <i className="fas fa-arrow-left"></i>
           {user ? "Back to Dashboard" : "Back to Home"}
         </Link>
+      </div>
       </div>
     </div>
   )

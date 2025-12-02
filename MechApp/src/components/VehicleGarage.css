@@ -1,0 +1,460 @@
+/* Vehicle Garage Component - Dark Theme */
+.vehicle-garage {
+  background: var(--bg-card, rgba(30, 30, 46, 0.95));
+  border-radius: var(--radius-xl, 15px);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  padding: 25px;
+  margin-bottom: 20px;
+}
+
+.garage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+}
+
+.garage-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.garage-title i {
+  font-size: 1.5rem;
+  color: var(--color-primary, #4a9eff);
+}
+
+.garage-title h3 {
+  color: var(--text-primary, #ffffff);
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.vehicle-count {
+  background: var(--bg-surface, rgba(255, 255, 255, 0.1));
+  color: var(--text-secondary, #b0b0b0);
+  padding: 4px 10px;
+  border-radius: var(--radius-full, 50px);
+  font-size: 0.85rem;
+}
+
+.btn-add-vehicle {
+  background: linear-gradient(135deg, var(--color-primary, #4a9eff) 0%, var(--color-primary-hover, #357abd) 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: var(--font-weight-medium, 500);
+  transition: all var(--transition-base, 0.3s ease);
+}
+
+.btn-add-vehicle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px var(--color-primary-glow, rgba(74, 158, 255, 0.4));
+}
+
+/* Vehicle Form */
+.vehicle-form-container {
+  background: var(--bg-surface, rgba(255, 255, 255, 0.05));
+  border-radius: var(--radius-lg, 12px);
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+}
+
+.vehicle-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.vehicle-form-header h4 {
+  color: var(--text-primary, #ffffff);
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary, #b0b0b0);
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 5px;
+  transition: color var(--transition-base, 0.3s ease);
+}
+
+.btn-close:hover {
+  color: var(--color-error, #ff6b6b);
+}
+
+.vehicle-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.section-label {
+  color: var(--text-primary, #ffffff);
+  font-weight: var(--font-weight-medium, 500);
+  font-size: 0.95rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  color: var(--text-secondary, #b0b0b0);
+  font-size: 0.9rem;
+}
+
+.form-input {
+  background: var(--bg-card, rgba(30, 30, 46, 0.95));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-radius: var(--radius-md, 8px);
+  padding: 12px 15px;
+  color: var(--text-primary, #ffffff);
+  font-size: 1rem;
+  transition: all var(--transition-base, 0.3s ease);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary, #4a9eff);
+  box-shadow: 0 0 0 3px var(--color-primary-glow, rgba(74, 158, 255, 0.2));
+}
+
+.form-input::placeholder {
+  color: var(--text-muted, rgba(255, 255, 255, 0.4));
+}
+
+.checkbox-group {
+  flex-direction: row !important;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary, #ffffff);
+  cursor: pointer;
+  position: relative;
+  padding-left: 30px;
+}
+
+.checkbox-label input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background: var(--bg-card, rgba(30, 30, 46, 0.95));
+  border: 2px solid var(--border-color, rgba(255, 255, 255, 0.2));
+  border-radius: var(--radius-sm, 4px);
+  transition: all var(--transition-base, 0.3s ease);
+}
+
+.checkbox-label:hover .checkmark {
+  border-color: var(--color-primary, #4a9eff);
+}
+
+.checkbox-label input:checked ~ .checkmark {
+  background: var(--color-primary, #4a9eff);
+  border-color: var(--color-primary, #4a9eff);
+}
+
+.checkmark::after {
+  content: '';
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-label input:checked ~ .checkmark::after {
+  display: block;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary, #4a9eff) 0%, var(--color-primary-hover, #357abd) 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: var(--font-weight-medium, 500);
+  transition: all var(--transition-base, 0.3s ease);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px var(--color-primary-glow, rgba(74, 158, 255, 0.4));
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--bg-surface, rgba(255, 255, 255, 0.1));
+  color: var(--text-primary, #ffffff);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
+  padding: 12px 24px;
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium, 500);
+  transition: all var(--transition-base, 0.3s ease);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-card, rgba(30, 30, 46, 0.95));
+  border-color: var(--color-primary, #4a9eff);
+}
+
+/* Empty State */
+.empty-garage {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.empty-garage i {
+  font-size: 3rem;
+  color: var(--text-muted, rgba(255, 255, 255, 0.3));
+  margin-bottom: 15px;
+}
+
+.empty-garage h4 {
+  color: var(--text-primary, #ffffff);
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+}
+
+.empty-garage p {
+  color: var(--text-secondary, #b0b0b0);
+  margin: 0 0 20px;
+}
+
+/* Vehicles List */
+.vehicles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.vehicle-card {
+  background: var(--bg-surface, rgba(255, 255, 255, 0.05));
+  border-radius: var(--radius-lg, 12px);
+  padding: 20px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-base, 0.3s ease);
+}
+
+.vehicle-card:hover {
+  border-color: var(--border-color, rgba(255, 255, 255, 0.2));
+  transform: translateX(5px);
+}
+
+.vehicle-card.selected {
+  border-color: var(--color-primary, #4a9eff);
+  background: rgba(74, 158, 255, 0.1);
+}
+
+.vehicle-card.primary {
+  border-left: 4px solid var(--color-warning, #f1c40f);
+}
+
+.vehicle-card-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.vehicle-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--color-primary, #4a9eff) 0%, var(--color-primary-hover, #357abd) 100%);
+  border-radius: var(--radius-md, 8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.vehicle-info {
+  flex: 1;
+}
+
+.vehicle-info h4 {
+  color: var(--text-primary, #ffffff);
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+}
+
+.vehicle-full-name {
+  color: var(--text-secondary, #b0b0b0);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.primary-badge {
+  background: linear-gradient(135deg, var(--color-warning, #f1c40f) 0%, #e67e22 100%);
+  color: #1a1a2e;
+  padding: 5px 12px;
+  border-radius: var(--radius-full, 50px);
+  font-size: 0.8rem;
+  font-weight: var(--font-weight-semibold, 600);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.primary-badge i {
+  font-size: 0.75rem;
+}
+
+.vehicle-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  margin-bottom: 12px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary, #b0b0b0);
+  font-size: 0.9rem;
+}
+
+.detail-item i {
+  color: var(--color-primary, #4a9eff);
+  width: 16px;
+  text-align: center;
+}
+
+.vehicle-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn-icon {
+  background: var(--bg-card, rgba(30, 30, 46, 0.95));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  color: var(--text-secondary, #b0b0b0);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm, 6px);
+  cursor: pointer;
+  transition: all var(--transition-base, 0.3s ease);
+}
+
+.btn-icon:hover {
+  color: var(--color-primary, #4a9eff);
+  border-color: var(--color-primary, #4a9eff);
+}
+
+.btn-danger-icon:hover {
+  color: var(--color-error, #ff6b6b);
+  border-color: var(--color-error, #ff6b6b);
+}
+
+/* Override VehicleSelector styles inside garage */
+.garage-vehicle-selector {
+  background: var(--bg-card, rgba(30, 30, 46, 0.95));
+  padding: 15px;
+  border-radius: var(--radius-md, 8px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .garage-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .vehicle-card-header {
+    flex-wrap: wrap;
+  }
+
+  .primary-badge {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .vehicle-details {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+

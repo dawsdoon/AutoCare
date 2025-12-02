@@ -142,14 +142,15 @@ export const AuthProvider = ({ children }) => {
             year: result.data.user.user_metadata?.vehicle_year || null
           }
         }
-        setUser(userData)
-        localStorage.setItem('autocare_user', JSON.stringify(userData))
-        return { success: true }
+        setUser(newUserData)
+        localStorage.setItem('autocare_user', JSON.stringify(newUserData))
+        return { success: true, data: { user: result.data.user } }
       } else {
         return { success: false, error: result.error }
       }
     } catch (error) {
-      return { success: false, error: 'An error occurred. Please try again.' }
+      console.error('SignUp error:', error)
+      return { success: false, error: error.message || 'An error occurred. Please try again.' }
     }
   }
 

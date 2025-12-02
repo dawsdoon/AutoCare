@@ -3,21 +3,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: var(--spacing-xl, 30px);
   flex-wrap: wrap;
-  gap: 20px;
+  gap: var(--spacing-lg, 20px);
 }
 
 .maintenance-header h2 {
-  color: #ffffff;
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 10px;
+  color: var(--text-primary, #ffffff);
+  font-size: var(--font-size-4xl, 2.5rem);
+  font-weight: var(--font-weight-bold, 700);
+  margin-bottom: var(--spacing-sm, 10px);
 }
 
 .maintenance-header p {
-  color: #b0b0b0;
-  font-size: 1.1rem;
+  color: var(--text-secondary, #b0b0b0);
+  font-size: var(--font-size-lg, 1.1rem);
 }
 
 /* Mileage Section */
