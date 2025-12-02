@@ -5,7 +5,7 @@ import 'react-calendar/dist/Calendar.css'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { useAuth } from '../contexts/AuthContext'
-import { AppointmentService } from '../services/supabase'
+import { AppointmentService, ServicePriceService } from '../services/supabase'
 import Navbar from '../components/Navbar'
 import './ServiceHistory.css'
 
@@ -20,12 +20,14 @@ const ServiceHistory = () => {
   const [rescheduleData, setRescheduleData] = useState({ date: '', time: '' })
   const [searchQuery, setSearchQuery] = useState('')
   const [dateRange, setDateRange] = useState({ start: '', end: '' })
+  const [servicePrices, setServicePrices] = useState([])
   
   const { user } = useAuth()
 
   useEffect(() => {
     if (user) {
       fetchAppointments()
+      fetchServicePrices()
     }
   }, [user])
 
@@ -46,6 +48,63 @@ const ServiceHistory = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const fetchServicePrices = async () => {
+    try {
+      const result = await ServicePriceService.getAllPrices()
+      if (result.success) {
+        setServicePrices(result.data || [])
+      }
+    } catch (error) {
+      console.error('Error fetching service prices:', error)
+    }
+  }
+
+  // Calculate total price for an appointment based on service names
+  const calculateAppointmentPrice = (appointment) => {
+    // Default prices (fallback if database prices not available)
+    const defaultPrices = {
+      'Oil Change': 29.99,
+      'Brake Inspection': 49.99,
+      'Tire Rotation': 39.99,
+      'Flat Tire Repair': 79.99,
+      'Wheel Alignment': 19.99,
+      'Seasonal Tire Change': 99.99
+    }
+
+    // Service name mapping to service types
+    const serviceNameToType = {
+      'Oil Change': 'oil-change',
+      'Brake Inspection': 'brake-inspection',
+      'Tire Rotation': 'tire-rotation',
+      'Flat Tire Repair': 'flat-tire-repair',
+      'Wheel Alignment': 'wheel-alignment',
+      'Seasonal Tire Change': 'seasonal-tire-change'
+    }
+
+    if (!appointment.service_name) return 0
+
+    // Parse service names (they might be comma-separated)
+    const serviceNames = appointment.service_name.split(',').map(s => s.trim())
+    let total = 0
+
+    serviceNames.forEach(serviceName => {
+      // Try to find price from database first
+      const serviceType = serviceNameToType[serviceName]
+      if (serviceType) {
+        const priceData = servicePrices.find(p => p.service_type === serviceType)
+        if (priceData) {
+          total += parseFloat(priceData.base_price)
+        } else if (defaultPrices[serviceName]) {
+          total += defaultPrices[serviceName]
+        }
+      } else if (defaultPrices[serviceName]) {
+        total += defaultPrices[serviceName]
+      }
+    })
+
+    return total
   }
 
   const handleDownloadPDF = (appointment) => {
@@ -69,6 +128,7 @@ const ServiceHistory = () => {
       ['Time', formatTime(appointment.appointment_time)],
       ['Service', appointment.service_name],
       ['Status', getStatusText(appointment.status)],
+      ['Total Amount', `$${calculateAppointmentPrice(appointment).toFixed(2)}`],
       ['Customer Name', appointment.customer_name],
       ['Email', appointment.customer_email],
       ['Phone', appointment.customer_phone || 'N/A']
@@ -166,6 +226,7 @@ const ServiceHistory = () => {
         ['Time', formatTime(appointment.appointment_time)],
         ['Service', appointment.service_name],
         ['Status', getStatusText(appointment.status)],
+        ['Total Amount', `$${calculateAppointmentPrice(appointment).toFixed(2)}`],
         ['Customer', appointment.customer_name],
         ['Email', appointment.customer_email],
         ['Phone', appointment.customer_phone || 'N/A']
@@ -611,6 +672,10 @@ const ServiceHistory = () => {
                             <div className="appointment-content">
                               <h4>{appointment.service_name}</h4>
                               <p>{appointment.service_description}</p>
+                              <div className="appointment-price-calendar">
+                                <i className="fas fa-dollar-sign"></i>
+                                <span>${calculateAppointmentPrice(appointment).toFixed(2)}</span>
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -698,6 +763,10 @@ const ServiceHistory = () => {
                                 <span>{appointment.customer_phone}</span>
                               </div>
                             )}
+                            <div className="meta-item appointment-price">
+                              <i className="fas fa-dollar-sign"></i>
+                              <span>${calculateAppointmentPrice(appointment).toFixed(2)}</span>
+                            </div>
                           </div>
                         </div>
 

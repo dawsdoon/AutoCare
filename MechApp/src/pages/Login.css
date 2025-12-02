@@ -104,19 +104,27 @@
   position: absolute;
   left: 15px;
   color: #4a9eff;
-  font-size: 1.1rem;
+  font-size: 1rem;
   z-index: 2;
+  pointer-events: none;
+  width: 20px;
+  text-align: center;
 }
 
 .form-input {
   width: 100%;
-  padding: 15px 15px 15px 45px;
+  padding: 15px 15px 15px 50px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   color: #ffffff;
   font-size: 1rem;
   transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.auth-form .input-container .form-input {
+  padding-left: 50px !important;
 }
 
 .form-input::placeholder {
